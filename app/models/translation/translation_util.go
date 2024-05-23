@@ -18,6 +18,11 @@ func GetBy(field, value string) (translation Translation) {
 	return
 }
 
+func GetByTidLang(translationId, language string) (translation Translation) {
+	database.DB.Where(`translation_id = ? AND language = ? `, translationId, language).First(&translation)
+	return
+}
+
 func GetT(translationId, language string) (msg string) {
 	var translation Translation
 	database.DB.Model(Translation{}).Where(`translation_id = ? AND language = ? `, translationId, language).Find(&translation)

@@ -9,6 +9,9 @@ import (
 	"time"
 
 	mathrand "math/rand"
+
+	"github.com/google/uuid"
+	"github.com/spf13/cast"
 )
 
 // Empty 类似于 PHP 的 empty() 函数
@@ -73,4 +76,19 @@ func RandomString(length int) string {
 		b[i] = letters[mathrand.Intn(len(letters))]
 	}
 	return string(b)
+}
+
+func UUID() string {
+	var uuidV1 uuid.UUID
+	var err error
+
+	for i := 0; i < 9999; i++ {
+		uuidV1, err = uuid.NewUUID()
+		if err != nil {
+			continue
+		} else {
+			break
+		}
+	}
+	return cast.ToString(uuidV1)
 }

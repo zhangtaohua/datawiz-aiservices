@@ -32,7 +32,7 @@ func TranslationSave(data interface{}, c *gin.Context) map[string][]string {
 			RequiredMsg("c.language"),
 			MinMsg("c.language", "2"),
 			MaxMsg("c.language", "32"),
-			InMsg("c.language", []string{"zh", "zh-CN", "zh-TW"}),
+			InMsg("c.language", []string{"en", "zh-CN", "zh-TW"}),
 		},
 		"translated_text": []string{
 			RequiredMsg("c.transText"),

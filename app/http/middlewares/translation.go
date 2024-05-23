@@ -18,7 +18,7 @@ func Translation() gin.HandlerFunc {
 			language = "en"
 		} else {
 			switch language {
-			case "zh", "zh_ch", "zh-cn", "zhcn":
+			case "zh", "zh_cn", "zh-cn", "zhcn", "zh_ch", "zh-ch", "zhch", "zh_chn", "zh-chn", "zhchn":
 				language = "zh-CN"
 				break
 
