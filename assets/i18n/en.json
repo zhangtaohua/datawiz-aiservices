@@ -1,0 +1,29 @@
+{
+  "c.name": "Name",
+  "c.key": "Translation key",
+  "c.language": "Language",
+  "c.description": "Description",
+  "c.transText": "Translation text",
+  
+  "v.required": " is required",
+  "v.atleast": "'s length at least ",
+  "v.nomore": "'s length cannot exceed ",
+  "v.szieCh": " characters",
+  "v.in": "must be one of ",
+  "v.union": "union key",
+  "v.exists": " already exists",
+
+  "r.success": "Operation successful",
+  "r.failed": "Operation failed",
+  "r.cFailed": "Creation failed, please try later~",
+  "r.uFailed": "Update failed, please try later~",
+  "r.dFailed": "Delete failed, please try later~",
+  "r.nodataErr": "Data does not exist, please make sure the request is correct",
+  "r.authErr": "Insufficient permissions, please make sure you have the corresponding permissions",
+  "r.serHardErr": "Internal server error, please try again later",
+  "r.reqFormatErr": "Request parsing error, please confirm whether the request format is correct. Please use the multipart header to upload files and the JSON format for parameters.",
+  "r.reqParseErr": "Request processing failed, please check the value of error",
+  "r.reqValidErr": "Request verification failed, please check errors for details",
+  "r.noPageErr": "Page returns 404",
+  "r.noRouterErr": "The route is not defined, please confirm whether the url and request method are correct"
+}

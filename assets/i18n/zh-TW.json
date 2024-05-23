@@ -1,0 +1,29 @@
+{
+  "c.name": "名稱",
+  "c.key": "翻譯鍵",
+  "c.language": "語言",
+  "c.description": "描述",
+  "c.transText": "翻譯文字",
+ 
+  "v.required": "為必填項",
+  "v.atleast": "長度至少",
+  "v.nomore": "長度不能超過",
+  "v.szieCh": "個字元",
+  "v.in": "必須是以下欄位",
+  "v.union": "聯合鍵",
+  "v.exists": "已經存在",
+
+  "r.success": "操作成功",
+  "r.failed": "操作失敗",
+  "r.cFailed": "建立失敗，請稍後再嘗試~",
+  "r.uFailed": "更新失敗，請稍後再嘗試~",
+  "r.dFailed": "刪除失敗，請稍後再嘗試~",
+  "r.nodataErr": "資料不存在，請確定請求正確",
+  "r.authErr": "權限不足，請確定您有對應的權限",
+  "r.serHardErr": "伺服器內部錯誤，請稍後再試",
+  "r.reqFormatErr": "請求解析錯誤，請確認請求格式是否正確。上傳檔案請使用 multipart 標頭，參數請使用 JSON 格式。",
+  "r.reqParseErr": "請求處理失敗，請查看 error 的值",
+  "r.reqValidErr": "請求驗證不通過，具體請查看 errors",
+  "r.noPageErr": "頁面返回 404",
+  "r.noRouterErr": "路由未定義，請確認 url 和請求方法是否正確"
+}
