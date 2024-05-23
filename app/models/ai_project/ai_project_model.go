@@ -35,7 +35,6 @@ func (aiProject *AiProject) Delete() (rowsAffected int64) {
 }
 
 func (aiProject *AiProject) CreateTx(request *requests.AiProjectRequest) error {
-	// 生成UUID作为 translated_id
 	tx := database.DB.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -79,5 +78,64 @@ func (aiProject *AiProject) CreateTx(request *requests.AiProjectRequest) error {
 		return err
 	}
 
-	return nil
+	return tx.Commit().Error
+}
+
+func (aiProject *AiProject) SaveTx(request *requests.AiProjectRequest) error {
+	tx := database.DB.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	if err := tx.Error; err != nil {
+		return err
+	}
+
+	// 实际更新的应该是翻译表中
+	nameKey := aiProject.Name
+	descKey := aiProject.Description
+
+	// todo 这里应该学习如何用事物处理。
+	nameTranslationModel := translation.GetByTidLang(nameKey, request.Language)
+	if nameTranslationModel.ID == 0 {
+		// 没有对应语言的翻译 就创建
+		nameTranslationModel = translation.Translation{
+			TranslationId:  nameKey,
+			Language:       request.Language,
+			TranslatedText: request.Name,
+		}
+		if err := tx.Create(&nameTranslationModel).Error; err != nil {
+			tx.Rollback()
+			return err
+		}
+	} else {
+		nameTranslationModel.TranslatedText = request.Name
+		if err := tx.Save(&nameTranslationModel).Error; err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+
+	descTranslationModel := translation.GetByTidLang(descKey, request.Language)
+	if descTranslationModel.ID == 0 {
+		descTranslationModel = translation.Translation{
+			TranslationId:  descKey,
+			Language:       request.Language,
+			TranslatedText: request.Description,
+		}
+		if err := tx.Create(&descTranslationModel).Error; err != nil {
+			tx.Rollback()
+			return err
+		}
+	} else {
+		descTranslationModel.TranslatedText = request.Description
+		if err := tx.Save(&descTranslationModel).Error; err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+
+	return tx.Commit().Error
 }
