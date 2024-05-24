@@ -18,6 +18,11 @@ func GetBy(field, value string) (aiProjectResult AiProjectResult) {
 	return
 }
 
+func GetByUUID(uuid string) (aiProjectResults []AiProjectResult) {
+	database.DB.Where(`ai_project_uuid = ?`, uuid).Find(&aiProjectResults)
+	return
+}
+
 func All() (aiProjectResults []AiProjectResult) {
 	database.DB.Find(&aiProjectResults)
 	return

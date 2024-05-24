@@ -6,6 +6,10 @@
   "c.transText": "翻译文字",
 
   "v.required": "为必填项",
+  "v.imgrequired": "必须上传图片",
+  "v.filerequired": "必须上传文件",
+  "v.fileMax": "文件大小不能超过",
+  "v.fileExt": "文件扩展名只能是",
   "v.atleast": "长度至少",
   "v.nomore": "长度不能超过",
   "v.szieCh": "个字符",

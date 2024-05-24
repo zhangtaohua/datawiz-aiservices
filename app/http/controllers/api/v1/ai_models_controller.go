@@ -2,7 +2,9 @@ package v1
 
 import (
 	"datawiz-aiservices/app/models/ai_model"
+	"datawiz-aiservices/app/models/translation"
 	"datawiz-aiservices/app/requests"
+	"datawiz-aiservices/pkg/app"
 	"datawiz-aiservices/pkg/response"
 	"datawiz-aiservices/pkg/translator"
 
@@ -13,8 +15,26 @@ type AiModelsController struct {
 	BaseAPIController
 }
 
+func getTransAiModel(aiModel *ai_model.AiModel) {
+	namekey := aiModel.Name
+	desckey := aiModel.Description
+	inputkey := aiModel.InputFeatures
+	outkey := aiModel.OutputLabels
+
+	tranV := translation.GetTs([]string{namekey, desckey, inputkey, outkey}, app.Language)
+
+	aiModel.Name = tranV[namekey]
+	aiModel.Description = tranV[desckey]
+	aiModel.InputFeatures = tranV[inputkey]
+	aiModel.OutputLabels = tranV[outkey]
+}
+
 func (ctrl *AiModelsController) Index(c *gin.Context) {
 	aiModels := ai_model.All()
+	length := len(aiModels)
+	for i := 0; i < length; i++ {
+		getTransAiModel(&aiModels[i])
+	}
 	response.Data(c, aiModels)
 }
 
@@ -24,6 +44,7 @@ func (ctrl *AiModelsController) Show(c *gin.Context) {
 		response.Abort404(c)
 		return
 	}
+	getTransAiModel(&aiModelModel)
 	response.Data(c, aiModelModel)
 }
 
@@ -35,9 +56,10 @@ func (ctrl *AiModelsController) Store(c *gin.Context) {
 	}
 
 	aiModelModel := ai_model.AiModel{
-		Name:        request.Name,
-		Description: request.Description,
+		Name:        "",
+		Description: "",
 		Type:        request.Type,
+		Category:    request.Category,
 
 		Framework:    request.Framework,
 		Algorithm:    request.Algorithm,
@@ -50,9 +72,10 @@ func (ctrl *AiModelsController) Store(c *gin.Context) {
 		F1Score:   request.F1Score,
 		AUC:       request.AUC,
 
-		InputFeatures: request.InputFeatures,
-		OutputLabels:  request.OutputLabels,
-		ExecMethod:    request.ExecMethod,
+		InputFeatures:   "",
+		OutputLabels:    "",
+		InputParameters: request.InputParameters,
+		ExecMethod:      request.ExecMethod,
 
 		Size:       request.Size,
 		Version:    request.Version,
@@ -60,8 +83,13 @@ func (ctrl *AiModelsController) Store(c *gin.Context) {
 		DeployedAt: request.DeployedAt,
 		RetiredAt:  request.RetiredAt,
 	}
-	aiModelModel.Create()
-	if aiModelModel.ID > 0 {
+
+	err := aiModelModel.CreateTx(&request)
+	if err == nil {
+		aiModelModel.Name = request.Name
+		aiModelModel.Description = request.Description
+		aiModelModel.InputFeatures = request.InputFeatures
+		aiModelModel.OutputLabels = request.OutputLabels
 		response.Created(c, aiModelModel)
 	} else {
 		response.Abort500(c, translator.TransHandler.T("r.cFailed"))
@@ -82,9 +110,10 @@ func (ctrl *AiModelsController) Update(c *gin.Context) {
 		return
 	}
 
-	aiModelModel.Name = request.Name
-	aiModelModel.Description = request.Description
+	// aiModelModel.Name = request.Name
+	// aiModelModel.Description = request.Description
 	aiModelModel.Type = request.Type
+	aiModelModel.Category = request.Category
 
 	aiModelModel.Framework = request.Framework
 	aiModelModel.Algorithm = request.Algorithm
@@ -97,8 +126,9 @@ func (ctrl *AiModelsController) Update(c *gin.Context) {
 	aiModelModel.F1Score = request.F1Score
 	aiModelModel.AUC = request.AUC
 
-	aiModelModel.InputFeatures = request.InputFeatures
-	aiModelModel.OutputLabels = request.OutputLabels
+	// aiModelModel.InputFeatures = request.InputFeatures
+	// aiModelModel.OutputLabels = request.OutputLabels
+	aiModelModel.InputParameters = request.InputParameters
 	aiModelModel.ExecMethod = request.ExecMethod
 
 	aiModelModel.Size = request.Size
@@ -107,8 +137,12 @@ func (ctrl *AiModelsController) Update(c *gin.Context) {
 	aiModelModel.DeployedAt = request.DeployedAt
 	aiModelModel.RetiredAt = request.RetiredAt
 
-	rowsAffected := aiModelModel.Save()
-	if rowsAffected > 0 {
+	err := aiModelModel.SaveTx(&request)
+	if err == nil {
+		aiModelModel.Name = request.Name
+		aiModelModel.Description = request.Description
+		aiModelModel.InputFeatures = request.InputFeatures
+		aiModelModel.OutputLabels = request.OutputLabels
 		response.Data(c, aiModelModel)
 	} else {
 		response.Abort500(c, translator.TransHandler.T("r.uFailed"))

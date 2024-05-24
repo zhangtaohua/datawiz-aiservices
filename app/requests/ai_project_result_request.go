@@ -3,19 +3,31 @@ package requests
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/thedevsaddam/govalidator"
+	"gorm.io/datatypes"
 )
 
-type AiProjectRequest struct {
+type AiProjectResultRequest struct {
 	Name        string `valid:"name" json:"name"`
-	Description string `valid:"description" json:"description"`
-	Language    string `valid:"language" json:"language"`
+	Description string `valid:"description" json:"description,omitempty"`
+
+	Input  datatypes.JSONMap `json:"input"`
+	Output datatypes.JSONMap `json:"output"`
+
+	Progress uint32 `json:"progress"`
+	Status   string `json:"status"`
+
+	UserID        string `json:"user_id"`
+	AiModelUUID   string `json:"ai_model_uuid"`
+	AiProjectUUID string `json:"ai_project_uuid"`
+
+	Language string `valid:"language" json:"language"`
 }
 
-func AiProjectSave(data interface{}, c *gin.Context) map[string][]string {
+func AiProjectResultSave(data interface{}, c *gin.Context) map[string][]string {
 
 	rules := govalidator.MapData{
-		"name":        []string{"required", "min_cn:2", "max_cn:255", "not_exists:ai_projects,name"},
-		"description": []string{"min_cn:2", "max_cn:255"},
+		"name":        []string{"required", "min_cn:2", "max_cn:255", "not_exists:ai_project_results,name"},
+		"description": []string{"min_cn:3", "max_cn:255"},
 		"language":    []string{"required", "min:2", "max:32", "in:en,zh-CN,zh-TW"},
 	}
 	messages := govalidator.MapData{

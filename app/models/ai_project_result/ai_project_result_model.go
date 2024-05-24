@@ -5,7 +5,10 @@ import (
 	"datawiz-aiservices/app/models"
 	"datawiz-aiservices/app/models/ai_model"
 	"datawiz-aiservices/app/models/ai_project"
+	"datawiz-aiservices/app/models/translation"
+	"datawiz-aiservices/app/requests"
 	"datawiz-aiservices/pkg/database"
+	"datawiz-aiservices/pkg/helpers"
 
 	"gorm.io/datatypes"
 )
@@ -24,7 +27,8 @@ type AiProjectResult struct {
 	// 输出结果
 	Output datatypes.JSONMap `json:"output"`
 
-	Status string `json:"status"`
+	Progress uint32 `json:"progress"`
+	Status   string `json:"status"`
 
 	// 其他信息
 	UserID        string `json:"user_id"`
@@ -49,4 +53,110 @@ func (aiProjectResult *AiProjectResult) Save() (rowsAffected int64) {
 func (aiProjectResult *AiProjectResult) Delete() (rowsAffected int64) {
 	result := database.DB.Delete(&aiProjectResult)
 	return result.RowsAffected
+}
+
+func (aiProjectResult *AiProjectResult) CreateTx(request *requests.AiProjectResultRequest) error {
+	tx := database.DB.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	if err := tx.Error; err != nil {
+		return err
+	}
+
+	// 生成UUID作为 translated_id
+
+	nameUUID := helpers.UUID()
+	descUUID := helpers.UUID()
+
+	aiProjectResult.Name = nameUUID
+	aiProjectResult.Description = descUUID
+	if err := tx.Create(&aiProjectResult).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	nameTranslationModel := translation.Translation{
+		TranslationId:  nameUUID,
+		Language:       request.Language,
+		TranslatedText: request.Name,
+	}
+	if err := tx.Create(&nameTranslationModel).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	descTranslationModel := translation.Translation{
+		TranslationId:  descUUID,
+		Language:       request.Language,
+		TranslatedText: request.Description,
+	}
+	if err := tx.Create(&descTranslationModel).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	return tx.Commit().Error
+}
+
+func (aiProjectResult *AiProjectResult) SaveTx(request *requests.AiProjectResultRequest) error {
+	tx := database.DB.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	if err := tx.Error; err != nil {
+		return err
+	}
+
+	// 实际更新的应该是翻译表中
+	nameKey := aiProjectResult.Name
+	descKey := aiProjectResult.Description
+
+	// todo 这里应该学习如何用事物处理。
+	nameTranslationModel := translation.GetByTidLang(nameKey, request.Language)
+	if nameTranslationModel.ID == 0 {
+		// 没有对应语言的翻译 就创建
+		nameTranslationModel = translation.Translation{
+			TranslationId:  nameKey,
+			Language:       request.Language,
+			TranslatedText: request.Name,
+		}
+		if err := tx.Create(&nameTranslationModel).Error; err != nil {
+			tx.Rollback()
+			return err
+		}
+	} else {
+		nameTranslationModel.TranslatedText = request.Name
+		if err := tx.Save(&nameTranslationModel).Error; err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+
+	descTranslationModel := translation.GetByTidLang(descKey, request.Language)
+	if descTranslationModel.ID == 0 {
+		descTranslationModel = translation.Translation{
+			TranslationId:  descKey,
+			Language:       request.Language,
+			TranslatedText: request.Description,
+		}
+		if err := tx.Create(&descTranslationModel).Error; err != nil {
+			tx.Rollback()
+			return err
+		}
+	} else {
+		descTranslationModel.TranslatedText = request.Description
+		if err := tx.Save(&descTranslationModel).Error; err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+
+	return tx.Commit().Error
 }

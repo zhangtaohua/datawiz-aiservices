@@ -22,9 +22,10 @@ type GormLogger struct {
 }
 
 // NewGormLogger 外部调用。实例化一个 GormLogger 对象，示例：
-//     DB, err := gorm.Open(dbConfig, &gorm.Config{
-//         Logger: logger.NewGormLogger(),
-//     })
+//
+//	DB, err := gorm.Open(dbConfig, &gorm.Config{
+//	    Logger: logger.NewGormLogger(),
+//	})
 func NewGormLogger() GormLogger {
 	return GormLogger{
 		ZapLogger:     Logger,                 // 使用全局的 logger.Logger 对象

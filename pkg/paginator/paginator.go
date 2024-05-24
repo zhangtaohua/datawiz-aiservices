@@ -48,15 +48,16 @@ type Paginator struct {
 // data —— 模型数组，传址获取数据
 // PerPage —— 每页条数，优先从 url 参数里取，否则使用 perPage 的值
 // 用法:
-//         query := database.DB.Model(Topic{}).Where("category_id = ?", cid)
-//      var topics []Topic
-//         paging := paginator.Paginate(
-//             c,
-//             query,
-//             &topics,
-//             app.APIURL(database.TableName(&Topic{})),
-//             perPage,
-//         )
+//
+//	   query := database.DB.Model(Topic{}).Where("category_id = ?", cid)
+//	var topics []Topic
+//	   paging := paginator.Paginate(
+//	       c,
+//	       query,
+//	       &topics,
+//	       app.APIURL(database.TableName(&Topic{})),
+//	       perPage,
+//	   )
 func Paginate(c *gin.Context, db *gorm.DB, whereFields []interface{}, data interface{}, baseURL string, perPage int) Paging {
 
 	// 初始化 Paginator 实例

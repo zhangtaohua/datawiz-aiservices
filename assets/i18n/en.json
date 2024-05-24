@@ -4,8 +4,12 @@
   "c.language": "Language",
   "c.description": "Description",
   "c.transText": "Translation text",
-  
+
   "v.required": " is required",
+  "v.imgrequired": "Images must be uploaded",
+  "v.filerequired": "Files must be uploaded",
+  "v.fileMax": "File size cannot exceed",
+  "v.fileExt": "File extension can only be",
   "v.atleast": "'s length at least ",
   "v.nomore": "'s length cannot exceed ",
   "v.szieCh": " characters",

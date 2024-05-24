@@ -59,6 +59,15 @@ func RegisterAPIRoutes(r *gin.Engine) {
 			apcGroup.DELETE("/:id", apc.Delete)
 		}
 
+		aprc := new(controllers.AiProjectResultsController)
+		aprcGroup := v1.Group("/project/results")
+		{
+			aprcGroup.GET("", aprc.Index)
+			aprcGroup.GET("/:id", aprc.Show)
+			aprcGroup.POST("", aprc.Store)
+			aprcGroup.PUT("/:id", aprc.Update)
+			aprcGroup.DELETE("/:id", aprc.Delete)
+		}
 		// end V1
 	}
 }

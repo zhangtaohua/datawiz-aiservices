@@ -14,9 +14,9 @@ func init() {
 		models.BaseModel
 		models.BaseUUIDModel
 
-		Name        string `gorm:"type:varchar(255);not null;index;"`
-		Description string `gorm:"type:varchar(255);default:null;"`
-		UserID      string `gorm:"type:varchar(255);not null;index"`
+		Name        string `gorm:"type:varchar(191);not null;index;"`
+		Description string `gorm:"type:varchar(191);default:null;"`
+		UserID      string `gorm:"type:varchar(191);not null;index"`
 
 		models.CommonTimestampsField
 	}

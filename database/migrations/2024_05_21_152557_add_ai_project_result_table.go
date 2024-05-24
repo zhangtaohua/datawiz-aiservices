@@ -25,21 +25,22 @@ func init() {
 		models.BaseModel
 		models.BaseUUIDModel
 
-		Name        string `gorm:"type:varchar(255);not null;index;"`
-		Description string `gorm:"type:varchar(255);default:null;"`
+		Name        string `gorm:"type:varchar(191);not null;index;"`
+		Description string `gorm:"type:varchar(191);default:null;"`
 
-		Input datatypes.JSONMap `gorm:"comment:输入参数"`
+		Input datatypes.JSONMap `gorm:"comment:输入参数;"`
 
-		Output datatypes.JSONMap `gorm:"comment:输出结果"`
+		Output datatypes.JSONMap `gorm:"comment:输出结果;"`
 
-		Status string `gorm:"type:varchar(32);default:null;comment:状态;"`
+		Progress uint32 `gorm:"default:0;comment:进度条;"`
+		Status   string `gorm:"type:varchar(32);default:null;comment:状态;"`
 
-		UserID        string `gorm:"type:varchar(255);not null;index"`
-		AiModelUUID   string `gorm:"type:varchar(255);not null;index"`
-		AiProjectUUID string `gorm:"type:varchar(255);not null;index"`
+		UserID        string `gorm:"type:varchar(191);not null;index;"`
+		AiModelUUID   string `gorm:"type:varchar(191);not null;index;"`
+		AiProjectUUID string `gorm:"type:varchar(191);not null;index;"`
 
-		AiModel   AiModel   `gorm:"foreignKey:AiModelUUID;references:UUID"`
-		AiProject AiProject `gorm:"foreignKey:AiProjectUUID;references:UUID"`
+		AiModel   AiModel   `gorm:"foreignKey:AiModelUUID;references:UUID;"`
+		AiProject AiProject `gorm:"foreignKey:AiProjectUUID;references:UUID;"`
 
 		models.CommonTimestampsField
 	}

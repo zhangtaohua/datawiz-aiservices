@@ -16,6 +16,46 @@ func RequiredMsg(key string) string {
 	return strings.Join(transMsg, "")
 }
 
+func RequiredUpImgMsg(key string) string {
+	transMsg := []string{
+		"required:",
+		translator.TransHandler.T(key),
+		translator.TransHandler.T("v.imgrequired"),
+	}
+
+	return strings.Join(transMsg, "")
+}
+
+func RequiredUpFileMsg(key string) string {
+	transMsg := []string{
+		"required:",
+		translator.TransHandler.T(key),
+		translator.TransHandler.T("v.filerequired"),
+	}
+
+	return strings.Join(transMsg, "")
+}
+
+func FileSizeMaxMsg(number string) string {
+	transMsg := []string{
+		"size:",
+		translator.TransHandler.T("v.fileMax"),
+		number,
+	}
+
+	return strings.Join(transMsg, "")
+}
+
+func FileExtMsg(ext string) string {
+	transMsg := []string{
+		"ext:",
+		translator.TransHandler.T("v.fileExt"),
+		ext,
+	}
+
+	return strings.Join(transMsg, "")
+}
+
 func MinMsg(key string, number string) string {
 	transMsg := []string{
 		"min:",

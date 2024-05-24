@@ -38,7 +38,8 @@ func NewVerifyCode() *VerifyCode {
 }
 
 // SendSMS 发送短信验证码，调用示例：
-//         verifycode.NewVerifyCode().SendSMS(request.Phone)
+//
+//	verifycode.NewVerifyCode().SendSMS(request.Phone)
 func (vc *VerifyCode) SendSMS(phone string) bool {
 
 	// 生成验证码
@@ -90,7 +91,8 @@ func (vc *VerifyCode) generateVerifyCode(key string) string {
 }
 
 // SendEmail 发送邮件验证码，调用示例：
-//         verifycode.NewVerifyCode().SendEmail(request.Email)
+//
+//	verifycode.NewVerifyCode().SendEmail(request.Email)
 func (vc *VerifyCode) SendEmail(email string) error {
 
 	// 生成验证码

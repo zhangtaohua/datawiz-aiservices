@@ -4,8 +4,12 @@
   "c.language": "語言",
   "c.description": "描述",
   "c.transText": "翻譯文字",
- 
+
   "v.required": "為必填項",
+  "v.imgrequired": "必須上傳圖片",
+  "v.filerequired": "必須上傳檔案",
+  "v.fileMax": "檔案大小不能超過",
+  "v.fileExt": "檔案副檔名只能是",
   "v.atleast": "長度至少",
   "v.nomore": "長度不能超過",
   "v.szieCh": "個字元",

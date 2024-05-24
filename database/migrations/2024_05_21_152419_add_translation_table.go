@@ -13,7 +13,7 @@ func init() {
 	type Translation struct {
 		models.BaseModel
 
-		TranslationId  string `gorm:"type:varchar(255);not null;uniqueIndex:T_R;"`
+		TranslationId  string `gorm:"type:varchar(191);not null;uniqueIndex:T_R;"`
 		Language       string `gorm:"type:varchar(32);not null;uniqueIndex:T_R;"`
 		TranslatedText string `gorm:"type:varchar(255);not null;"`
 	}

@@ -5,7 +5,6 @@ docker run --name rjpostgres -e POSTGRES_PASSWORD=123456  -e ALLOW_IP_RANGE=0.0.
 
 
 
-
 1、 安装环境
     包括数据库 mysql redis 等。
 
@@ -32,8 +31,6 @@ docker run --name rjpostgres -e POSTGRES_PASSWORD=123456  -e ALLOW_IP_RANGE=0.0.
 
 2、完全杀死 goexcel.exe 命令
 `taskkill /f /t /im goexcel.exe`
-
-
 
 `CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o goexcel.exe`
 

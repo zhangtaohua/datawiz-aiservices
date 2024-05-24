@@ -45,8 +45,9 @@ func Has(key string) bool {
 }
 
 // GetObject 应该传地址，用法如下:
-//     model := user.User{}
-//     cache.GetObject("key", &model)
+//
+//	model := user.User{}
+//	cache.GetObject("key", &model)
 func GetObject(key string, wanted interface{}) {
 	val := Cache.Store.Get(key)
 	if len(val) > 0 {
