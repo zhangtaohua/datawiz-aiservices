@@ -56,6 +56,7 @@ func RegisterAPIRoutes(r *gin.Engine) {
 			apcGroup.GET("/:id", apc.Show)
 			apcGroup.POST("", apc.Store)
 			apcGroup.PUT("/:id", apc.Update)
+			apcGroup.PATCH("/:id", apc.Patch)
 			apcGroup.DELETE("/:id", apc.Delete)
 		}
 

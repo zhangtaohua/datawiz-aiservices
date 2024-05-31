@@ -105,7 +105,7 @@ func (ctrl *AiProjectResultsController) Update(c *gin.Context) {
 	// aiProjectResultModel.AiModelUUID = request.AiModelUUID
 	// aiProjectResultModel.AiProjectUUID = request.AiProjectUUID
 
-	err := aiProjectResultModel.SaveTx(&request)
+	err := aiProjectResultModel.SaveTx(&request, false)
 	if err == nil {
 		aiProjectResultModel.Name = request.Name
 		aiProjectResultModel.Description = request.Description

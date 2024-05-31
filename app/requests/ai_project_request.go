@@ -39,3 +39,30 @@ func AiProjectSave(data interface{}, c *gin.Context) map[string][]string {
 
 	return validate(data, rules, messages)
 }
+
+func AiProjectUpdate(data interface{}, c *gin.Context) map[string][]string {
+
+	rules := govalidator.MapData{
+		"name":        []string{"min_cn:2", "max_cn:255"},
+		"description": []string{"min_cn:2", "max_cn:255"},
+		"language":    []string{"required", "min:2", "max:32", "in:en,zh-CN,zh-TW"},
+	}
+	messages := govalidator.MapData{
+		"name": []string{
+			MinCnMsg("c.name", "2"),
+			MaxCnMsg("c.name", "255"),
+		},
+		"description": []string{
+			MinCnMsg("c.description", "2"),
+			MaxCnMsg("c.description", "255"),
+		},
+		"language": []string{
+			RequiredMsg("c.language"),
+			MinMsg("c.language", "2"),
+			MaxMsg("c.language", "32"),
+			InMsg("c.language", []string{"en", "zh-CN", "zh-TW"}),
+		},
+	}
+
+	return validate(data, rules, messages)
+}

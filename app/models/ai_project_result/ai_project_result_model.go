@@ -102,7 +102,7 @@ func (aiProjectResult *AiProjectResult) CreateTx(request *requests.AiProjectResu
 	return tx.Commit().Error
 }
 
-func (aiProjectResult *AiProjectResult) SaveTx(request *requests.AiProjectResultRequest) error {
+func (aiProjectResult *AiProjectResult) SaveTx(request *requests.AiProjectResultRequest, isUpdate bool) error {
 	tx := database.DB.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -119,42 +119,46 @@ func (aiProjectResult *AiProjectResult) SaveTx(request *requests.AiProjectResult
 	descKey := aiProjectResult.Description
 
 	// todo 这里应该学习如何用事物处理。
-	nameTranslationModel := translation.GetByTidLang(nameKey, request.Language)
-	if nameTranslationModel.ID == 0 {
-		// 没有对应语言的翻译 就创建
-		nameTranslationModel = translation.Translation{
-			TranslationId:  nameKey,
-			Language:       request.Language,
-			TranslatedText: request.Name,
-		}
-		if err := tx.Create(&nameTranslationModel).Error; err != nil {
-			tx.Rollback()
-			return err
-		}
-	} else {
-		nameTranslationModel.TranslatedText = request.Name
-		if err := tx.Save(&nameTranslationModel).Error; err != nil {
-			tx.Rollback()
-			return err
+	if !isUpdate || (isUpdate && !helpers.Empty(request.Name)) {
+		nameTranslationModel := translation.GetByTidLang(nameKey, request.Language)
+		if nameTranslationModel.ID == 0 {
+			// 没有对应语言的翻译 就创建
+			nameTranslationModel = translation.Translation{
+				TranslationId:  nameKey,
+				Language:       request.Language,
+				TranslatedText: request.Name,
+			}
+			if err := tx.Create(&nameTranslationModel).Error; err != nil {
+				tx.Rollback()
+				return err
+			}
+		} else {
+			nameTranslationModel.TranslatedText = request.Name
+			if err := tx.Save(&nameTranslationModel).Error; err != nil {
+				tx.Rollback()
+				return err
+			}
 		}
 	}
 
-	descTranslationModel := translation.GetByTidLang(descKey, request.Language)
-	if descTranslationModel.ID == 0 {
-		descTranslationModel = translation.Translation{
-			TranslationId:  descKey,
-			Language:       request.Language,
-			TranslatedText: request.Description,
-		}
-		if err := tx.Create(&descTranslationModel).Error; err != nil {
-			tx.Rollback()
-			return err
-		}
-	} else {
-		descTranslationModel.TranslatedText = request.Description
-		if err := tx.Save(&descTranslationModel).Error; err != nil {
-			tx.Rollback()
-			return err
+	if !isUpdate || (isUpdate && !helpers.Empty(request.Description)) {
+		descTranslationModel := translation.GetByTidLang(descKey, request.Language)
+		if descTranslationModel.ID == 0 {
+			descTranslationModel = translation.Translation{
+				TranslationId:  descKey,
+				Language:       request.Language,
+				TranslatedText: request.Description,
+			}
+			if err := tx.Create(&descTranslationModel).Error; err != nil {
+				tx.Rollback()
+				return err
+			}
+		} else {
+			descTranslationModel.TranslatedText = request.Description
+			if err := tx.Save(&descTranslationModel).Error; err != nil {
+				tx.Rollback()
+				return err
+			}
 		}
 	}
 

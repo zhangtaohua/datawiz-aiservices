@@ -5,6 +5,7 @@ import (
 	"datawiz-aiservices/app/models/translation"
 	"datawiz-aiservices/app/requests"
 	"datawiz-aiservices/pkg/app"
+	"datawiz-aiservices/pkg/helpers"
 	"datawiz-aiservices/pkg/response"
 	"datawiz-aiservices/pkg/translator"
 
@@ -18,7 +19,8 @@ type AiProjectsController struct {
 func getTransAiProject(aiProject *ai_project.AiProject) {
 	namekey := aiProject.Name
 	desckey := aiProject.Description
-	tranV := translation.GetTs([]string{namekey, desckey}, app.Language)
+	// tranV := translation.GetTs([]string{namekey, desckey}, app.Language)
+	tranV := translation.TryGetTsV2([]string{namekey, desckey}, app.Language)
 
 	aiProject.Name = tranV[namekey]
 	aiProject.Description = tranV[desckey]
@@ -80,10 +82,38 @@ func (ctrl *AiProjectsController) Update(c *gin.Context) {
 		return
 	}
 
-	err := aiProjectModel.SaveTx(&request)
+	err := aiProjectModel.SaveTx(&request, false)
 	if err == nil {
 		aiProjectModel.Name = request.Name
 		aiProjectModel.Description = request.Description
+		response.Data(c, aiProjectModel)
+	} else {
+		response.Abort500(c, translator.TransHandler.T("r.uFailed"))
+	}
+}
+
+func (ctrl *AiProjectsController) Patch(c *gin.Context) {
+
+	aiProjectModel := ai_project.Get(c.Param("id"))
+	if aiProjectModel.ID == 0 {
+		response.Abort404(c)
+		return
+	}
+
+	request := requests.AiProjectRequest{}
+	ok := requests.Validate(c, &request, requests.AiProjectUpdate)
+	if !ok {
+		return
+	}
+
+	err := aiProjectModel.SaveTx(&request, true)
+	if err == nil {
+		if !helpers.Empty(request.Name) {
+			aiProjectModel.Name = request.Name
+		}
+		if !helpers.Empty(request.Description) {
+			aiProjectModel.Description = request.Description
+		}
 		response.Data(c, aiProjectModel)
 	} else {
 		response.Abort500(c, translator.TransHandler.T("r.uFailed"))

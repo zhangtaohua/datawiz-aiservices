@@ -34,7 +34,7 @@ type AiModel struct {
 	AUC       float32 `json:"auc"`
 
 	InputFeatures   string            `json:"input_features"`
-	OutputLabels    string            `json:"out_labels"`
+	OutputLabels    string            `json:"output_labels"`
 	InputParameters datatypes.JSONMap `json:"input_parameters"`
 	ExecMethod      datatypes.JSONMap `json:"exec_method"`
 
@@ -110,7 +110,7 @@ func (aiModel *AiModel) CreateTx(request *requests.AiModelRequest) error {
 	}
 
 	inTranslationModel := translation.Translation{
-		TranslationId:  descUUID,
+		TranslationId:  inputUUID,
 		Language:       request.Language,
 		TranslatedText: request.InputFeatures,
 	}
@@ -120,7 +120,7 @@ func (aiModel *AiModel) CreateTx(request *requests.AiModelRequest) error {
 	}
 
 	outTranslationModel := translation.Translation{
-		TranslationId:  descUUID,
+		TranslationId:  outputUUID,
 		Language:       request.Language,
 		TranslatedText: request.OutputLabels,
 	}
@@ -141,6 +141,11 @@ func (aiModel *AiModel) SaveTx(request *requests.AiModelRequest) error {
 	}()
 
 	if err := tx.Error; err != nil {
+		return err
+	}
+
+	if err := tx.Save(&aiModel).Error; err != nil {
+		tx.Rollback()
 		return err
 	}
 

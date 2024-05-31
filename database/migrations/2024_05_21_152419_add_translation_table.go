@@ -15,7 +15,7 @@ func init() {
 
 		TranslationId  string `gorm:"type:varchar(191);not null;uniqueIndex:T_R;"`
 		Language       string `gorm:"type:varchar(32);not null;uniqueIndex:T_R;"`
-		TranslatedText string `gorm:"type:varchar(255);not null;"`
+		TranslatedText string `gorm:"type:text;not null;"`
 	}
 
 	up := func(migrator gorm.Migrator, DB *sql.DB) {

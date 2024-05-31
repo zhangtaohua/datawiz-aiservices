@@ -84,6 +84,7 @@ func UUID() string {
 
 	for i := 0; i < 9999; i++ {
 		uuidV1, err = uuid.NewUUID()
+		// time.Sleep(1000 * time.Nanosecond)
 		if err != nil {
 			continue
 		} else {
@@ -91,4 +92,22 @@ func UUID() string {
 		}
 	}
 	return cast.ToString(uuidV1)
+}
+
+// input: "2024-05-27T15:12:48.356854+08:00"
+// output: "2024-05-27T07:12:48.356854Z"
+func ToUTC(input string) string {
+	// 解析输入时间字符串
+	t, err := time.Parse(time.RFC3339Nano, input)
+	if err != nil {
+		fmt.Println("Error parsing time:", err)
+		t = time.Now().UTC()
+	}
+	// 转换为 UTC 时间
+	utcTime := t.UTC()
+
+	// 格式化为 ISO 8601 格式的字符串
+	output := utcTime.Format(time.RFC3339Nano)
+
+	return output
 }

@@ -1,7 +1,6 @@
 package requests
 
 import (
-	"mime/multipart"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -10,11 +9,11 @@ import (
 )
 
 type AiModelRequest struct {
-	Name        string                `valid:"name" json:"name"`
-	Description string                `valid:"description" json:"description"`
-	Type        string                `valid:"type" json:"type"`
-	Category    string                `valid:"category" json:"category"`
-	Icon        *multipart.FileHeader `valid:"icon" form:"icon"`
+	Name        string `valid:"name" json:"name"`
+	Description string `valid:"description" json:"description"`
+	Type        string `valid:"type" json:"type"`
+	Category    string `valid:"category" json:"category"`
+	// Icon        *multipart.FileHeader `valid:"icon" form:"icon"`
 
 	Framework    string `valid:"framework" json:"framework"`
 	Algorithm    string `valid:"algorithm" json:"algorithm"`
@@ -28,7 +27,7 @@ type AiModelRequest struct {
 	AUC       float32 `valid:"auc" json:"auc"`
 
 	InputFeatures   string            `valid:"input_features" json:"input_features"`
-	OutputLabels    string            `valid:"out_labels" json:"out_labels"`
+	OutputLabels    string            `valid:"output_labels" json:"output_labels"`
 	InputParameters datatypes.JSONMap `valid:"input_parameters" json:"input_parameters"`
 	ExecMethod      datatypes.JSONMap `valid:"exec_method" json:"exec_method"`
 
