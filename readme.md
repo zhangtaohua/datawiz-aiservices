@@ -8,8 +8,8 @@ docker run --name rjpostgres -e POSTGRES_PASSWORD=123456  -e ALLOW_IP_RANGE=0.0.
 1、 安装环境
     包括数据库 mysql redis 等。
 
-    drop database haibingoffice;
-    create database haibingoffice;
+    drop database aidb;
+    create database aidb;
 
 2、 修改 env 文件
     主要是数据库链接 地址 端口 密码等。
