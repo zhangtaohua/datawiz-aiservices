@@ -4,6 +4,7 @@
   "c.language": "语言",
   "c.description": "描述",
   "c.transText": "翻译文字",
+  "c.code": "代码",
 
   "v.required": "为必填项",
   "v.imgrequired": "必须上传图片",

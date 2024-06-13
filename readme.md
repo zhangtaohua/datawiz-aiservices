@@ -20,7 +20,7 @@ docker run --name rjpostgres -e POSTGRES_PASSWORD=123456  -e ALLOW_IP_RANGE=0.0.
 4、 执行命令 seed 预定义数据
     `go run main.go seed`
 
-5、 导入商品
+5、 导入数据
     ``
 
 # 二、 部署相关

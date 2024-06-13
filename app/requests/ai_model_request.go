@@ -11,9 +11,12 @@ import (
 type AiModelRequest struct {
 	Name        string `valid:"name" json:"name"`
 	Description string `valid:"description" json:"description"`
+	Code        string `valid:"code" json:"code"`
 	Type        string `valid:"type" json:"type"`
 	Category    string `valid:"category" json:"category"`
 	// Icon        *multipart.FileHeader `valid:"icon" form:"icon"`
+	Icon  string `valid:"icon" json:"icon"`
+	Cover string `valid:"cover" json:"cover"`
 
 	Framework    string `valid:"framework" json:"framework"`
 	Algorithm    string `valid:"algorithm" json:"algorithm"`
@@ -30,6 +33,7 @@ type AiModelRequest struct {
 	OutputLabels    string            `valid:"output_labels" json:"output_labels"`
 	InputParameters datatypes.JSONMap `valid:"input_parameters" json:"input_parameters"`
 	ExecMethod      datatypes.JSONMap `valid:"exec_method" json:"exec_method"`
+	OutputFormatter datatypes.JSONMap `valid:"output_formatter" json:"output_formatter"`
 
 	Size       float32   `valid:"size" json:"size"`
 	Version    string    `valid:"version" json:"version"`
@@ -43,10 +47,11 @@ type AiModelRequest struct {
 func AiModelSave(data interface{}, c *gin.Context) map[string][]string {
 
 	// todo
-	// not_exists 这一条规则也是有问题，现在都要到翻译表中去检查。
+	// 1、其中 name 字段 not_exists 这一条规则也是有问题，现在都要到翻译表中去检查。
 	rules := govalidator.MapData{
-		"name":        []string{"required", "min_cn:2", "max_cn:255", "not_exists:ai_models,name"},
-		"description": []string{"min_cn:2", "max_cn:255"},
+		"name":        []string{"required", "min_cn:2", "max_cn:191", "not_exists:ai_models,name"},
+		"description": []string{"min_cn:2", "max_cn:191"},
+		"code":        []string{"required", "min_cn:2", "max_cn:191"},
 		// size 的单位为 bytes
 		// - 1024 bytes 为 1kb
 		// - 1048576 bytes 为 1mb
@@ -59,12 +64,18 @@ func AiModelSave(data interface{}, c *gin.Context) map[string][]string {
 		"name": []string{
 			RequiredMsg("c.name"),
 			MinCnMsg("c.name", "2"),
-			MaxCnMsg("c.name", "255"),
+			MaxCnMsg("c.name", "191"),
 			NotExistMsg("c.name"),
 		},
 		"description": []string{
 			MinCnMsg("c.description", "2"),
-			MaxCnMsg("c.description", "255"),
+			MaxCnMsg("c.description", "191"),
+		},
+		"code": []string{
+			RequiredMsg("c.code"),
+			MinCnMsg("c.code", "2"),
+			MaxCnMsg("c.code", "191"),
+			NotExistMsg("c.code"),
 		},
 		"file:icon": []string{
 			FileExtMsg(" png, jpg, jpeg"),

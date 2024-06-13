@@ -14,7 +14,7 @@ func Get(idstr string) (download Download) {
 }
 
 func GetBy(field, value string) (download Download) {
-	database.DB.Where("? = ?", field, value).First(&download)
+	database.DB.Where(field, value).First(&download)
 	return
 }
 
@@ -25,7 +25,7 @@ func All() (downloads []Download) {
 
 func IsExist(field, value string) bool {
 	var count int64
-	database.DB.Model(Download{}).Where(" = ?", field, value).Count(&count)
+	database.DB.Model(Download{}).Where(field, value).Count(&count)
 	return count > 0
 }
 

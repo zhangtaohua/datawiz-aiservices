@@ -17,16 +17,16 @@ type TranslationRequest struct {
 func TranslationSave(data interface{}, c *gin.Context) map[string][]string {
 
 	rules := govalidator.MapData{
-		"translation_id":  []string{"required", "min:2", "max:255"},
+		"translation_id":  []string{"required", "min:2", "max:191"},
 		"language":        []string{"required", "min:2", "max:32", "in:en,zh-CN,zh-TW"},
-		"translated_text": []string{"required", "min:2", "max:255"},
+		"translated_text": []string{"required", "min:2", "max:191"},
 	}
 
 	messages := govalidator.MapData{
 		"translation_id": []string{
 			RequiredMsg("c.key"),
 			MinMsg("c.key", "2"),
-			MaxMsg("c.key", "255"),
+			MaxMsg("c.key", "191"),
 		},
 		"language": []string{
 			RequiredMsg("c.language"),

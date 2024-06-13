@@ -8,26 +8,27 @@ import (
 type AiProjectRequest struct {
 	Name        string `valid:"name" json:"name"`
 	Description string `valid:"description" json:"description"`
+	Cover       string `valid:"cover" json:"cover"`
 	Language    string `valid:"language" json:"language"`
 }
 
 func AiProjectSave(data interface{}, c *gin.Context) map[string][]string {
 
 	rules := govalidator.MapData{
-		"name":        []string{"required", "min_cn:2", "max_cn:255", "not_exists:ai_projects,name"},
-		"description": []string{"min_cn:2", "max_cn:255"},
+		"name":        []string{"required", "min_cn:2", "max_cn:191", "not_exists:ai_projects,name"},
+		"description": []string{"min_cn:2", "max_cn:191"},
 		"language":    []string{"required", "min:2", "max:32", "in:en,zh-CN,zh-TW"},
 	}
 	messages := govalidator.MapData{
 		"name": []string{
 			RequiredMsg("c.name"),
 			MinCnMsg("c.name", "2"),
-			MaxCnMsg("c.name", "255"),
+			MaxCnMsg("c.name", "191"),
 			NotExistMsg("c.name"),
 		},
 		"description": []string{
 			MinCnMsg("c.description", "2"),
-			MaxCnMsg("c.description", "255"),
+			MaxCnMsg("c.description", "191"),
 		},
 		"language": []string{
 			RequiredMsg("c.language"),
@@ -43,18 +44,18 @@ func AiProjectSave(data interface{}, c *gin.Context) map[string][]string {
 func AiProjectUpdate(data interface{}, c *gin.Context) map[string][]string {
 
 	rules := govalidator.MapData{
-		"name":        []string{"min_cn:2", "max_cn:255"},
-		"description": []string{"min_cn:2", "max_cn:255"},
+		"name":        []string{"min_cn:2", "max_cn:191"},
+		"description": []string{"min_cn:2", "max_cn:191"},
 		"language":    []string{"required", "min:2", "max:32", "in:en,zh-CN,zh-TW"},
 	}
 	messages := govalidator.MapData{
 		"name": []string{
 			MinCnMsg("c.name", "2"),
-			MaxCnMsg("c.name", "255"),
+			MaxCnMsg("c.name", "191"),
 		},
 		"description": []string{
 			MinCnMsg("c.description", "2"),
-			MaxCnMsg("c.description", "255"),
+			MaxCnMsg("c.description", "191"),
 		},
 		"language": []string{
 			RequiredMsg("c.language"),

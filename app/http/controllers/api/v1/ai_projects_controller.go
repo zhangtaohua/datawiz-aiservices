@@ -55,6 +55,7 @@ func (ctrl *AiProjectsController) Store(c *gin.Context) {
 	aiProjectModel := ai_project.AiProject{
 		Name:        "",
 		Description: "",
+		Cover:       request.Cover,
 		UserID:      "rj-todo",
 	}
 	err := aiProjectModel.CreateTx(&request)
@@ -82,6 +83,7 @@ func (ctrl *AiProjectsController) Update(c *gin.Context) {
 		return
 	}
 
+	aiProjectModel.Cover = request.Cover
 	err := aiProjectModel.SaveTx(&request, false)
 	if err == nil {
 		aiProjectModel.Name = request.Name

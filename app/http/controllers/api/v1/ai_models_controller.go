@@ -58,8 +58,11 @@ func (ctrl *AiModelsController) Store(c *gin.Context) {
 	aiModelModel := ai_model.AiModel{
 		Name:        "",
 		Description: "",
+		Code:        request.Code,
 		Type:        request.Type,
 		Category:    request.Category,
+		Icon:        request.Icon,
+		Cover:       request.Cover,
 
 		Framework:    request.Framework,
 		Algorithm:    request.Algorithm,
@@ -76,6 +79,7 @@ func (ctrl *AiModelsController) Store(c *gin.Context) {
 		OutputLabels:    "",
 		InputParameters: request.InputParameters,
 		ExecMethod:      request.ExecMethod,
+		OutputFormatter: request.OutputFormatter,
 
 		Size:       request.Size,
 		Version:    request.Version,
@@ -112,8 +116,11 @@ func (ctrl *AiModelsController) Update(c *gin.Context) {
 
 	// aiModelModel.Name = request.Name
 	// aiModelModel.Description = request.Description
+	aiModelModel.Code = request.Code
 	aiModelModel.Type = request.Type
 	aiModelModel.Category = request.Category
+	aiModelModel.Icon = request.Icon
+	aiModelModel.Cover = request.Cover
 
 	aiModelModel.Framework = request.Framework
 	aiModelModel.Algorithm = request.Algorithm
@@ -130,6 +137,7 @@ func (ctrl *AiModelsController) Update(c *gin.Context) {
 	// aiModelModel.OutputLabels = request.OutputLabels
 	aiModelModel.InputParameters = request.InputParameters
 	aiModelModel.ExecMethod = request.ExecMethod
+	aiModelModel.OutputFormatter = request.OutputFormatter
 
 	aiModelModel.Size = request.Size
 	aiModelModel.Version = request.Version

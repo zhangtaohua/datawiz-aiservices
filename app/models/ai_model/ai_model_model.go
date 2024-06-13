@@ -18,9 +18,11 @@ type AiModel struct {
 
 	Name        string `json:"name"`
 	Description string `json:"description"`
+	Code        string `json:"code"`
 	Type        string `json:"type"`
 	Category    string `json:"category"`
 	Icon        string `json:"icon"`
+	Cover       string `json:"cover"`
 
 	Framework    string `json:"framework"`
 	Algorithm    string `json:"algorithm"`
@@ -37,6 +39,7 @@ type AiModel struct {
 	OutputLabels    string            `json:"output_labels"`
 	InputParameters datatypes.JSONMap `json:"input_parameters"`
 	ExecMethod      datatypes.JSONMap `json:"exec_method"`
+	OutputFormatter datatypes.JSONMap `json:"output_formatter"`
 
 	Size       float32   `json:"size"`
 	Version    string    `json:"version"`

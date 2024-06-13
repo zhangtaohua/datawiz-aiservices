@@ -14,7 +14,7 @@ func Get(idstr string) (aiModel AiModel) {
 }
 
 func GetBy(field, value string) (aiModel AiModel) {
-	database.DB.Where("? = ?", field, value).First(&aiModel)
+	database.DB.Where(field, value).First(&aiModel)
 	return
 }
 
@@ -25,7 +25,7 @@ func All() (aiModels []AiModel) {
 
 func IsExist(field, value string) bool {
 	var count int64
-	database.DB.Model(AiModel{}).Where(" = ?", field, value).Count(&count)
+	database.DB.Model(AiModel{}).Where(field, value).Count(&count)
 	return count > 0
 }
 

@@ -17,6 +17,7 @@ func init() {
 		Name        string `gorm:"type:varchar(191);not null;index;"`
 		Description string `gorm:"type:varchar(191);default:null;"`
 		UserID      string `gorm:"type:varchar(191);not null;index"`
+		Cover       string `gorm:"type:varchar(191);default:null;"`
 
 		models.CommonTimestampsField
 	}

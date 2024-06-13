@@ -30,6 +30,8 @@ func init() {
 
 			// API 域名，未设置的话所有 API URL 加 api 前缀，如 http://domain.com/api/v1/users
 			"api_domain": config.Env("API_DOMAIN"),
+
+			"ai_process_base_url": config.Env("AI_PROCESS_BASE_URL", "http://localhost:5177"),
 		}
 	})
 }

@@ -14,7 +14,7 @@ func Get(idstr string) (translation Translation) {
 }
 
 func GetBy(field, value string) (translation Translation) {
-	database.DB.Where("? = ?", field, value).First(&translation)
+	database.DB.Where(field, value).First(&translation)
 	return
 }
 
@@ -144,7 +144,7 @@ func All() (translation []Translation) {
 
 func IsExist(field, value string) bool {
 	var count int64
-	database.DB.Model(Translation{}).Where("? = ?", field, value).Count(&count)
+	database.DB.Model(Translation{}).Where(field, value).Count(&count)
 	return count > 0
 }
 

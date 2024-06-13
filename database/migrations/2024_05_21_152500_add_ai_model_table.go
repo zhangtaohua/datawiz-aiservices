@@ -18,9 +18,11 @@ func init() {
 
 		Name        string `gorm:"type:varchar(191);not null;index;"`
 		Description string `gorm:"type:varchar(191);default:null;"`
+		Code        string `gorm:"type:varchar(191);not null;uniqueIndex;"`
 		Type        string `gorm:"type:varchar(191);default:null;comment:模型类型（如分类、回归、聚类等）;"`
 		Category    string `gorm:"type:varchar(191);default:null;comment:分类（如AI解释，基础处理， 算法工具等）;"`
 		Icon        string `gorm:"type:varchar(191);default:null;"`
+		Cover       string `gorm:"type:varchar(191);default:null;"`
 
 		Framework    string `gorm:"type:varchar(191);default:null;comment:深度学习框架（如TensorFlow、PyTorch）;"`
 		Algorithm    string `gorm:"type:varchar(191);default:null;"`
@@ -37,6 +39,7 @@ func init() {
 		OutputLabels    string            `gorm:"comment:输出标签;"`
 		InputParameters datatypes.JSONMap `gorm:"comment:输入参数;"`
 		ExecMethod      datatypes.JSONMap `gorm:"comment:执行方法;"`
+		OutputFormatter datatypes.JSONMap `gorm:"comment:输出格式;"`
 
 		Size       float32   `gorm:"comment:模型大小;"`
 		Version    string    `gorm:"type:varchar(32);default:null;comment:版本号;"`

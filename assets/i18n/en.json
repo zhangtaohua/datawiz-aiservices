@@ -4,6 +4,7 @@
   "c.language": "Language",
   "c.description": "Description",
   "c.transText": "Translation text",
+  "c.code": "Code",
 
   "v.required": " is required",
   "v.imgrequired": "Images must be uploaded",

@@ -26,20 +26,20 @@ type AiProjectResultRequest struct {
 func AiProjectResultSave(data interface{}, c *gin.Context) map[string][]string {
 
 	rules := govalidator.MapData{
-		"name":        []string{"required", "min_cn:2", "max_cn:255", "not_exists:ai_project_results,name"},
-		"description": []string{"min_cn:3", "max_cn:255"},
+		"name":        []string{"required", "min_cn:2", "max_cn:191", "not_exists:ai_project_results,name"},
+		"description": []string{"min_cn:3", "max_cn:191"},
 		"language":    []string{"required", "min:2", "max:32", "in:en,zh-CN,zh-TW"},
 	}
 	messages := govalidator.MapData{
 		"name": []string{
 			RequiredMsg("c.name"),
 			MinCnMsg("c.name", "2"),
-			MaxCnMsg("c.name", "255"),
+			MaxCnMsg("c.name", "191"),
 			NotExistMsg("c.name"),
 		},
 		"description": []string{
 			MinCnMsg("c.description", "2"),
-			MaxCnMsg("c.description", "255"),
+			MaxCnMsg("c.description", "191"),
 		},
 		"language": []string{
 			RequiredMsg("c.language"),

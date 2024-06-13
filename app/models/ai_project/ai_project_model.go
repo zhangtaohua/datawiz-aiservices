@@ -16,6 +16,7 @@ type AiProject struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	UserID      string `json:"user_id"`
+	Cover       string `json:"cover"`
 
 	models.CommonTimestampsField
 }

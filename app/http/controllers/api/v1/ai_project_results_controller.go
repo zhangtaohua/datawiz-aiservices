@@ -1,18 +1,81 @@
 package v1
 
 import (
+	"bytes"
+	"datawiz-aiservices/app/models/ai_model"
 	"datawiz-aiservices/app/models/ai_project_result"
 	"datawiz-aiservices/app/models/translation"
 	"datawiz-aiservices/app/requests"
 	"datawiz-aiservices/pkg/app"
+	"datawiz-aiservices/pkg/config"
 	"datawiz-aiservices/pkg/response"
 	"datawiz-aiservices/pkg/translator"
+	"encoding/json"
+	"fmt"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/cast"
 )
 
 type AiProjectResultsController struct {
 	BaseAPIController
+}
+
+func notifyAiProcess(result_uuid, ai_model_code string) bool {
+	aiProcessBaseUrl := config.Get("app.ai_process_base_url")
+	aiProcessUrl := aiProcessBaseUrl + "/ais/api/v1/process"
+	fmt.Println("通知处理", aiProcessBaseUrl, aiProcessUrl)
+	method := "POST"
+	reqData := map[string]string{
+		"uuid":          result_uuid,
+		"ai_model_code": ai_model_code,
+	}
+
+	jsonData, err := json.Marshal(reqData)
+	if err != nil {
+		fmt.Println("Error encoding JSON:", err)
+		return false
+	}
+
+	req, err := http.NewRequest(method, aiProcessUrl, bytes.NewBuffer(jsonData))
+	if err != nil {
+		fmt.Println("Error creating request:", err)
+		return false
+	}
+
+	req.Header.Add("Content-Type", "application/json")
+
+	// sent req
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Println("Error sending request:", err)
+		return false
+	}
+	defer resp.Body.Close()
+
+	// read Body
+	if resp.StatusCode == http.StatusOK {
+		// fmt.Println("Response Status:", resp.Status)
+		// fmt.Println("Response Body:", string(body))
+
+		// body, err := io.ReadAll(resp.Body)
+		// if err != nil {
+		//   fmt.Println("Error reading response:", err)
+		//   return false
+		// }
+
+		// var result map[string]interface{}
+		// err = json.Unmarshal(body, &result)
+		// if err != nil {
+		//   fmt.Println("Error parsing Body JSON response:", err)
+		//   return false
+		// }
+		return true
+	} else {
+		return false
+	}
 }
 
 func getTransAiProjectResult(aiProjectResultModel *ai_project_result.AiProjectResult) {
@@ -57,6 +120,12 @@ func (ctrl *AiProjectResultsController) Store(c *gin.Context) {
 		return
 	}
 
+	aiModel := ai_model.GetBy("uuid", string(request.AiModelUUID))
+	if aiModel.ID == 0 {
+		response.Abort404(c)
+		return
+	}
+
 	aiProjectResultModel := ai_project_result.AiProjectResult{
 		Name:        "",
 		Description: "",
@@ -76,6 +145,8 @@ func (ctrl *AiProjectResultsController) Store(c *gin.Context) {
 	if err == nil {
 		aiProjectResultModel.Name = request.Name
 		aiProjectResultModel.Description = request.Description
+		// 发送请求到Python 进行AI处理
+		notifyAiProcess(cast.ToString(aiProjectResultModel.UUID), string(aiModel.Code))
 		response.Created(c, aiProjectResultModel)
 	} else {
 		response.Abort500(c, translator.TransHandler.T("r.cFailed"))
