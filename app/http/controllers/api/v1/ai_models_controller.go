@@ -2,9 +2,7 @@ package v1
 
 import (
 	"datawiz-aiservices/app/models/ai_model"
-	"datawiz-aiservices/app/models/translation"
 	"datawiz-aiservices/app/requests"
-	"datawiz-aiservices/pkg/app"
 	"datawiz-aiservices/pkg/response"
 	"datawiz-aiservices/pkg/translator"
 
@@ -15,26 +13,8 @@ type AiModelsController struct {
 	BaseAPIController
 }
 
-func getTransAiModel(aiModel *ai_model.AiModel) {
-	namekey := aiModel.Name
-	desckey := aiModel.Description
-	inputkey := aiModel.InputFeatures
-	outkey := aiModel.OutputLabels
-
-	tranV := translation.GetTs([]string{namekey, desckey, inputkey, outkey}, app.Language)
-
-	aiModel.Name = tranV[namekey]
-	aiModel.Description = tranV[desckey]
-	aiModel.InputFeatures = tranV[inputkey]
-	aiModel.OutputLabels = tranV[outkey]
-}
-
 func (ctrl *AiModelsController) Index(c *gin.Context) {
 	aiModels := ai_model.All()
-	length := len(aiModels)
-	for i := 0; i < length; i++ {
-		getTransAiModel(&aiModels[i])
-	}
 	response.Data(c, aiModels)
 }
 
@@ -44,7 +24,6 @@ func (ctrl *AiModelsController) Show(c *gin.Context) {
 		response.Abort404(c)
 		return
 	}
-	getTransAiModel(&aiModelModel)
 	response.Data(c, aiModelModel)
 }
 

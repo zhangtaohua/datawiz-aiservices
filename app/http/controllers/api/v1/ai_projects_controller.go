@@ -2,9 +2,7 @@ package v1
 
 import (
 	"datawiz-aiservices/app/models/ai_project"
-	"datawiz-aiservices/app/models/translation"
 	"datawiz-aiservices/app/requests"
-	"datawiz-aiservices/pkg/app"
 	"datawiz-aiservices/pkg/helpers"
 	"datawiz-aiservices/pkg/response"
 	"datawiz-aiservices/pkg/translator"
@@ -16,22 +14,8 @@ type AiProjectsController struct {
 	BaseAPIController
 }
 
-func getTransAiProject(aiProject *ai_project.AiProject) {
-	namekey := aiProject.Name
-	desckey := aiProject.Description
-	// tranV := translation.GetTs([]string{namekey, desckey}, app.Language)
-	tranV := translation.TryGetTsV2([]string{namekey, desckey}, app.Language)
-
-	aiProject.Name = tranV[namekey]
-	aiProject.Description = tranV[desckey]
-}
-
 func (ctrl *AiProjectsController) Index(c *gin.Context) {
 	aiProjects := ai_project.All()
-	length := len(aiProjects)
-	for i := 0; i < length; i++ {
-		getTransAiProject(&aiProjects[i])
-	}
 	response.Data(c, aiProjects)
 }
 
@@ -41,7 +25,6 @@ func (ctrl *AiProjectsController) Show(c *gin.Context) {
 		response.Abort404(c)
 		return
 	}
-	getTransAiProject(&aiProjectModel)
 	response.Data(c, aiProjectModel)
 }
 

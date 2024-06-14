@@ -4,9 +4,7 @@ import (
 	"bytes"
 	"datawiz-aiservices/app/models/ai_model"
 	"datawiz-aiservices/app/models/ai_project_result"
-	"datawiz-aiservices/app/models/translation"
 	"datawiz-aiservices/app/requests"
-	"datawiz-aiservices/pkg/app"
 	"datawiz-aiservices/pkg/config"
 	"datawiz-aiservices/pkg/response"
 	"datawiz-aiservices/pkg/translator"
@@ -78,22 +76,8 @@ func notifyAiProcess(result_uuid, ai_model_code string) bool {
 	}
 }
 
-func getTransAiProjectResult(aiProjectResultModel *ai_project_result.AiProjectResult) {
-	namekey := aiProjectResultModel.Name
-	desckey := aiProjectResultModel.Description
-
-	tranV := translation.GetTs([]string{namekey, desckey}, app.Language)
-
-	aiProjectResultModel.Name = tranV[namekey]
-	aiProjectResultModel.Description = tranV[desckey]
-}
-
 func (ctrl *AiProjectResultsController) Index(c *gin.Context) {
 	aiProjectResults := ai_project_result.All()
-	length := len(aiProjectResults)
-	for i := 0; i < length; i++ {
-		getTransAiProjectResult(&aiProjectResults[i])
-	}
 	response.Data(c, aiProjectResults)
 }
 
@@ -102,13 +86,8 @@ func (ctrl *AiProjectResultsController) Show(c *gin.Context) {
 	aiProjectResultModel := ai_project_result.Get(id)
 	if aiProjectResultModel.ID == 0 {
 		aiProjectResultModels := ai_project_result.GetByUUID(id)
-		length := len(aiProjectResultModels)
-		for i := 0; i < length; i++ {
-			getTransAiProjectResult(&aiProjectResultModels[i])
-		}
 		response.Data(c, aiProjectResultModels)
 	} else {
-		getTransAiProjectResult(&aiProjectResultModel)
 		response.Data(c, aiProjectResultModel)
 	}
 }
