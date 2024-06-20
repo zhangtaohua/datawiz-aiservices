@@ -34,7 +34,17 @@ docker run --name rjpostgres -e POSTGRES_PASSWORD=123456  -e ALLOW_IP_RANGE=0.0.
 
 `CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o goexcel.exe`
 
+go build -ldflags "-H=windowsgui" -o goexcel.exe
+docker run -d --name RJmysql -p 3306:3306 -v /d/dataserver/data/mysql/data:/var/lib/mysql/ -v /d/dataserver/data/mysql/conf/my.cnf:/etc/mysql/my.cnf  -v /d/dataserver/data/mysql/logs:/logs -e MYSQL_ROOT_PASSWORD=123456 mysql
 
+docker run --name mysql -v D:/docker/mysql/conf/my.cnf:/etc/mysql/my.cnf -v D:/docker/mysql/logs:/logs -v D:/docker/mysql/data:/var/lib/mysql -v  D:/docker/mysql/conf/conf.d:/etc/mysql/conf.d -e MYSQL_ROOT_PASSWORD=123456 -d -i -p 3306:3306 mysql:5.7
+
+nginx -t
+
+docker run -d --name RJredis -p 6379:6379 -v /d/dataserver/data/redis/data:/data redis --appendonly yes
+
+ kill -9 $(lsof -ti:3000)
+ 
 重新启动
 
 1、双击 nginx.exe 看到一个小黑窗一闪而过，启动成功

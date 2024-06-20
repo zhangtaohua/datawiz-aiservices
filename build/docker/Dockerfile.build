@@ -1,0 +1,52 @@
+FROM golang:alpine AS builder
+
+# ENV GOPROXY https://goproxy.cn
+ENV GO111MODULE=on \
+  CGO_ENABLED=0 \
+  GOARCH="amd64" \
+  GOOS=linux
+
+WORKDIR /build
+
+RUN adduser -u 10001 -D appuser
+
+RUN chown -R appuser /build
+
+USER appuser
+
+COPY . .
+RUN go mod download
+# RUN go build --ldflags "-extldflags -static" -o main .
+RUN go build -ldflags="-s -w" -v -o starwiz_ai_service .
+
+# generate the final image
+FROM alpine:latest AS producer
+
+ENV TZ="Asia/Shanghai" \
+  LANG="en_US.utf8" \
+  LC_ALL="en_US.utf8"
+
+WORKDIR /app
+
+VOLUME ["/app"]
+
+COPY --from=builder /build/starwiz_ai_service /app/
+COPY --from=builder /build/assets/ /app/assets/
+COPY --from=builder /build/public/ /app/public/
+COPY --from=builder /build/storage/ /app/storage/
+COPY --from=builder /build/.env /app/.env
+COPY --from=builder /etc/passwd /etc/passwd
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+
+RUN set -ex \
+  && chown -R appuser /app \
+  && apk add --update curl \
+  && rm -rf /var/cache/apk/*
+
+USER appuser
+
+EXPOSE 8088
+
+HEALTHCHECK CMD curl -fs http://localhost/api/v1/ai/health || exit 1
+
+ENTRYPOINT ["/app/starwiz_ai_service"]

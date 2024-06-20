@@ -2,7 +2,7 @@
 package migrate
 
 import (
-	"io/ioutil"
+	"os"
 
 	"datawiz-aiservices/pkg/console"
 	"datawiz-aiservices/pkg/database"
@@ -48,6 +48,8 @@ func (migrator *Migrator) createMigrationsTable() {
 	// 不存在才创建
 	if !migrator.Migrator.HasTable(&migration) {
 		migrator.Migrator.CreateTable(&migration)
+		// 刚开始创建时，也直接把所有表给 migrage up 了
+		migrator.Up()
 	}
 }
 
@@ -147,7 +149,7 @@ func (migrator *Migrator) readAllMigrationFiles() []MigrationFile {
 
 	// 读取 database/migrations/ 目录下的所有文件
 	// 默认是会按照文件名称进行排序
-	files, err := ioutil.ReadDir(migrator.Folder)
+	files, err := os.ReadDir(migrator.Folder)
 	console.ExitIf(err)
 
 	var migrateFiles []MigrationFile

@@ -29,6 +29,12 @@ func RegisterAPIRoutes(r *gin.Engine) {
 		v1.StaticFS("/uploads", http.Dir("./public/uploads"))
 		// v1.Static("/uploads", "./public/uploads")
 
+		hc := new(controllers.HealthsController)
+		hcGroup := v1.Group("/health")
+		{
+			hcGroup.GET("", hc.Health)
+		}
+
 		tc := new(controllers.TranslationsController)
 		tcGroup := v1.Group("/translations")
 		{

@@ -2,6 +2,7 @@
 package bootstrap
 
 import (
+	"datawiz-aiservices/app/models/translation"
 	"datawiz-aiservices/database/seeders"
 	"datawiz-aiservices/pkg/console"
 	"datawiz-aiservices/pkg/seed"
@@ -21,6 +22,13 @@ func RunSeed() {
 			} else {
 				args = []string{}
 			}
+			runSeeders(args)
+		}
+	} else {
+		// 这里是为了判断 ，如果 trans 表为空的话，证明没有填空原始数据，在填充原始数据。
+		IsEmpty := translation.IsEmpty()
+		if IsEmpty {
+			args := []string{}
 			runSeeders(args)
 		}
 	}

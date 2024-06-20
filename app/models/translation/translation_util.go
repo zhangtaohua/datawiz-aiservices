@@ -154,6 +154,12 @@ func IsExistUnion(translationId, language string) bool {
 	return count > 0
 }
 
+func IsEmpty() bool {
+	var count int64
+	database.DB.Model(Translation{}).Count(&count)
+	return count == 0
+}
+
 func Paginate(c *gin.Context, whereFields []interface{}, perPage int) (translation []Translation, paging paginator.Paging) {
 	paging = paginator.Paginate(
 		c,
