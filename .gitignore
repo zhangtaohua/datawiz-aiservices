@@ -70,6 +70,8 @@ Thumbs.db
 .idea/
 /go_build_*
 out/
+build/bin
+build/images
 .vscode/
 .vscode/settings.json
 *.sublime*
