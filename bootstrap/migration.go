@@ -38,8 +38,9 @@ func RunMigration() {
 				break
 			}
 		}
+	} else {
+		runUp()
 	}
-
 }
 
 func migrator() *migrate.Migrator {

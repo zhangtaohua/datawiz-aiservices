@@ -23,7 +23,7 @@ docker run --name rjpostgres -e POSTGRES_PASSWORD=123456  -e ALLOW_IP_RANGE=0.0.
 5、 导入数据
     ``
 
-# 二、 部署相关
+# 二、 windowns部署相关
 `go build -ldflags "-H=windowsgui" -o goexcel.exe`
 
 1、完全杀死 nginx 命令 
@@ -62,4 +62,49 @@ create extension "uuid-ossp"
 
 语言参考表
 http://www.lingoes.net/zh/translator/langcode.htm
+
+# 4 Linux 部署
+
+## 4.1 前置条件：
+
+### 4.1.1 硬件条件
+CPU：
+GPU：
+内存：
+硬盘：
+
+
+### 4.1.2 软件条件
+
+操作系统： linux(ubuntu, centos)
+依赖库： cifs-utils、cuda, cudnn
+软件： docker、
+
+## 4.2 实际步骤：
+
+以下所有步骤均认为已满足前置条件.
+
+### 4.2.1 复制文件
+假设
+
+源文件目录： D:\share\go
+目标文件目录：/home/datawiz/datawiz-ai
+
+使用任意办法将源文件目录下所有文件复制到目标文件目录下。
+完成后的目录结果如下所示
+```
+├── build
+│   └── images
+│       └── starwiz_ai_go.tar.gz
+├── deployments
+│   ├── deploy.sh
+│   ├── docker-compose
+│   │   └── docker-compose.yaml
+```
+
+### 4.3.2 执行脚本
+chmod -R 777 .
+cd deplyments
+chmod +x deploy.sh
+./deploy.sh
 

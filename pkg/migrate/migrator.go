@@ -48,8 +48,6 @@ func (migrator *Migrator) createMigrationsTable() {
 	// 不存在才创建
 	if !migrator.Migrator.HasTable(&migration) {
 		migrator.Migrator.CreateTable(&migration)
-		// 刚开始创建时，也直接把所有表给 migrage up 了
-		migrator.Up()
 	}
 }
 

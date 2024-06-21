@@ -9,6 +9,7 @@ import (
 	"datawiz-aiservices/pkg/database"
 	"datawiz-aiservices/pkg/logger"
 
+	"go.uber.org/zap"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
@@ -23,6 +24,7 @@ func SetupDB() {
 	databaseType := config.Get("database.connection")
 	switch databaseType {
 	case "postgres":
+		check_or_creat_pg_database(config.Get("database.postgres.database"))
 		// 构建 DSN 信息
 		// dsn format,  <username>:<password>@<hostname>:<port>/<db>?[k=v& ......]
 		// dsn: "postgres://postgres:123456@localhost:5432/public?sslmode=disable&TimeZone=Asia/Shanghai"
@@ -72,4 +74,40 @@ func SetupDB() {
 	database.SQLDB.SetMaxIdleConns(config.GetInt("database.mysql.max_idle_connections"))
 	// 设置每个链接的过期时间
 	database.SQLDB.SetConnMaxLifetime(time.Duration(config.GetInt("database.mysql.max_life_seconds")) * time.Second)
+}
+
+func check_or_creat_pg_database(databasename string) bool {
+	dsn := fmt.Sprintf("postgres://%v:%v@%v:%v/%v?sslmode=disable&TimeZone=Asia/Shanghai",
+		config.Get("database.postgres.username"),
+		config.Get("database.postgres.password"),
+		config.Get("database.postgres.host"),
+		config.Get("database.postgres.port"),
+		"postgres",
+	)
+	fmt.Printf("dsn postgres = %v \n", dsn)
+	dbConfig := postgres.Open(dsn)
+	database.Connect(dbConfig, logger.NewGormLogger())
+
+	var exists bool
+	raw_str := fmt.Sprintf("SELECT EXISTS(SELECT datname FROM pg_catalog.pg_database WHERE datname = '%v')", databasename)
+	fmt.Printf("dsn raw_str = %v \n", raw_str)
+
+	row := database.DB.Raw(raw_str).Row()
+	fmt.Printf("dsn row data = %v \n", row)
+	if err := row.Scan(&exists); err != nil {
+		logger.Fatal("DATABASE Error ", zap.Any("error", err))
+	}
+	fmt.Printf("dsn exists = %v \n", exists)
+
+	if exists {
+		fmt.Println("Database aidb already exists.")
+	} else {
+		// 创建 aidb 数据库
+		if err := database.DB.Exec("CREATE DATABASE aidb").Error; err != nil {
+			logger.Fatal("DATABASE Error ", zap.Any("error", err))
+			return false
+		}
+		fmt.Println("Database aidb created successfully.")
+	}
+	return true
 }

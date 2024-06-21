@@ -10,7 +10,7 @@ VOLUME ["/app"]
 
 ARG APP_NAME=starwiz_ai_service
 
-COPY  build/bin/${APP_NAME}} /app/
+COPY  build/bin/${APP_NAME} /app/
 COPY  assets/ /app/assets/
 COPY  public/ /app/public/
 COPY  storage/ /app/storage/
@@ -30,4 +30,4 @@ EXPOSE 8088
 
 HEALTHCHECK CMD curl -fs http://localhost/api/v1/ai/health || exit 1
 
-ENTRYPOINT ["/app/${APP_NAME}"]
+ENTRYPOINT ["/app/starwiz_ai_service"]
