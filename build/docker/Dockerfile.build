@@ -32,7 +32,6 @@ VOLUME ["/app"]
 
 COPY --from=builder /build/starwiz_ai_service /app/
 COPY --from=builder /build/assets/ /app/assets/
-COPY --from=builder /build/public/ /app/public/
 COPY --from=builder /build/storage/ /app/storage/
 COPY --from=builder /build/.env /app/.env
 COPY --from=builder /etc/passwd /etc/passwd
@@ -47,6 +46,6 @@ USER appuser
 
 EXPOSE 8088
 
-HEALTHCHECK CMD curl -fs http://localhost/api/v1/ai/health || exit 1
+HEALTHCHECK CMD curl -fs http://localhost:8088/api/v1/ai/health || exit 1
 
 ENTRYPOINT ["/app/starwiz_ai_service"]

@@ -19,7 +19,7 @@ func (ctrl *AiModelsController) Index(c *gin.Context) {
 }
 
 func (ctrl *AiModelsController) Show(c *gin.Context) {
-	aiModelModel := ai_model.Get(c.Param("id"))
+	aiModelModel := ai_model.Get(c.Param("id"), false)
 	if aiModelModel.ID == 0 {
 		response.Abort404(c)
 		return
@@ -81,7 +81,7 @@ func (ctrl *AiModelsController) Store(c *gin.Context) {
 
 func (ctrl *AiModelsController) Update(c *gin.Context) {
 
-	aiModelModel := ai_model.Get(c.Param("id"))
+	aiModelModel := ai_model.Get(c.Param("id"), true)
 	if aiModelModel.ID == 0 {
 		response.Abort404(c)
 		return
@@ -138,7 +138,7 @@ func (ctrl *AiModelsController) Update(c *gin.Context) {
 
 func (ctrl *AiModelsController) Delete(c *gin.Context) {
 
-	aiModelModel := ai_model.Get(c.Param("id"))
+	aiModelModel := ai_model.Get(c.Param("id"), true)
 	if aiModelModel.ID == 0 {
 		response.Abort404(c)
 		return

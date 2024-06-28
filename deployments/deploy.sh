@@ -8,8 +8,8 @@ echo "Script directory: $SCRIPT_DIR"
 PARENT_DIR="$(dirname "$SCRIPT_DIR")"
 echo "Parent directory: $PARENT_DIR"
 
-PUBLIC_DIR="$PARENT_DIR/public"
-LOGS_DIR="$PARENT_DIR/storage/logs"
+PUBLIC_DIR="$PARENT_DIR/runing/public"
+LOGS_DIR="$PARENT_DIR/runing/storage/logs"
 
 sudo mkdir -p $PUBLIC_DIR
 sudo mkdir -p $LOGS_DIR
@@ -22,7 +22,7 @@ echo "IMAGE directory: $IMAGE_TAR_FILE"
 
 if [ -f "$IMAGE_TAR_FILE" ]; then
     echo "images*.tar.gz found in parent directory. Running docker load ..."
-    # docker load -i $IMAGE_TAR_FILE
+    docker load -i $IMAGE_TAR_FILE
 else
     echo "images*.tar.gz not found in parent directory."
 fi
@@ -42,7 +42,7 @@ fi
 DOCKER_COMPOSE_FILE="$SCRIPT_DIR/docker-compose/docker-compose.yaml"
 if [ -f "$DOCKER_COMPOSE_FILE" ]; then
     echo "docker-compose.yaml found, running docker-compose"
-    docker-compose -f $DOCKER_COMPOSE_FILE up
+    docker-compose -f $DOCKER_COMPOSE_FILE up -d
 else
     echo "docker-compose.yaml not found"
     exit 1

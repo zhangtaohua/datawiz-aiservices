@@ -43,7 +43,7 @@ func SaveUploadAvatar(c *gin.Context, file *multipart.FileHeader) (string, error
 	// 确保目录存在，不存在创建
 	publicPath := "public"
 	dirName := fmt.Sprintf("/uploads/avatars/%s/%s/", app.TimenowInTimezone().Format("2006/01/02"), "RJ")
-	os.MkdirAll(publicPath+dirName, 0755)
+	os.MkdirAll(publicPath+dirName, 0777)
 
 	// 保存文件
 	fileName := randomNameFromUploadFile(file)

@@ -8,7 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// GuestJWT 强制使用游客身份访问
 func Translation() gin.HandlerFunc {
 	return func(c *gin.Context) {
 

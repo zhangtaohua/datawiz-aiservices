@@ -9,8 +9,12 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-func Get(idstr string) (aiProjectResult AiProjectResult) {
-	database.DB.Preload(clause.Associations).Where("id", idstr).First(&aiProjectResult)
+func Get(idstr string, isSkipHooks bool) (aiProjectResult AiProjectResult) {
+	if isSkipHooks {
+		database.SkipHookDB.Preload(clause.Associations).Where("id", idstr).First(&aiProjectResult)
+	} else {
+		database.DB.Preload(clause.Associations).Where("id", idstr).First(&aiProjectResult)
+	}
 	return
 }
 

@@ -8,8 +8,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Get(idstr string) (aiModel AiModel) {
-	database.DB.Where("id", idstr).First(&aiModel)
+func Get(idstr string, isSkipHooks bool) (aiModel AiModel) {
+	if isSkipHooks {
+		database.SkipHookDB.Where("id", idstr).First(&aiModel)
+	} else {
+		database.DB.Where("id", idstr).First(&aiModel)
+	}
 	return
 }
 

@@ -18,6 +18,7 @@ import (
 // DB 对象
 var DB *gorm.DB
 var SQLDB *sql.DB
+var SkipHookDB *gorm.DB
 
 // Connect 连接数据库
 func Connect(dbConfig gorm.Dialector, _logger gormlogger.Interface) {
@@ -31,6 +32,11 @@ func Connect(dbConfig gorm.Dialector, _logger gormlogger.Interface) {
 	if err != nil {
 		fmt.Println(err.Error())
 	}
+
+	SkipHookDB = DB.Session(&gorm.Session{
+		//设置跳过hook
+		SkipHooks: true,
+	})
 
 	// 获取底层的 sqlDB
 	SQLDB, err = DB.DB()

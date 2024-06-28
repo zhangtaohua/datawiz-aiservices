@@ -54,6 +54,9 @@ macos_local_builder:
 	&& GOARCH=amd64\
 	&& go build -ldflags=${COMPILE_LDFLAGS} -o build/bin/${APP_NAME}
 
+deploy:linux_local_builder
+	scp -r D:\Work\project\golang\src\datawiz-aiservices\build\bin\${APP_NAME} root@192.168.3.237:/home/datawiz/datawiz-ai/build/bin
+
 test:
 	docker run -d --name ${TEST_CONTAINER_NAME} -v /d/Work/Golang/run/aigo/.env:/app/.env -p 8088:8088  ${IMAGE_NAME}:local_prod
 

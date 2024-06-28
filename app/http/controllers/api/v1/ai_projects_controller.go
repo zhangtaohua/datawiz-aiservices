@@ -20,7 +20,7 @@ func (ctrl *AiProjectsController) Index(c *gin.Context) {
 }
 
 func (ctrl *AiProjectsController) Show(c *gin.Context) {
-	aiProjectModel := ai_project.Get(c.Param("id"))
+	aiProjectModel := ai_project.Get(c.Param("id"), false)
 	if aiProjectModel.ID == 0 {
 		response.Abort404(c)
 		return
@@ -54,7 +54,7 @@ func (ctrl *AiProjectsController) Store(c *gin.Context) {
 
 func (ctrl *AiProjectsController) Update(c *gin.Context) {
 
-	aiProjectModel := ai_project.Get(c.Param("id"))
+	aiProjectModel := ai_project.Get(c.Param("id"), true)
 	if aiProjectModel.ID == 0 {
 		response.Abort404(c)
 		return
@@ -79,7 +79,7 @@ func (ctrl *AiProjectsController) Update(c *gin.Context) {
 
 func (ctrl *AiProjectsController) Patch(c *gin.Context) {
 
-	aiProjectModel := ai_project.Get(c.Param("id"))
+	aiProjectModel := ai_project.Get(c.Param("id"), true)
 	if aiProjectModel.ID == 0 {
 		response.Abort404(c)
 		return
@@ -107,7 +107,7 @@ func (ctrl *AiProjectsController) Patch(c *gin.Context) {
 
 func (ctrl *AiProjectsController) Delete(c *gin.Context) {
 
-	aiProjectModel := ai_project.Get(c.Param("id"))
+	aiProjectModel := ai_project.Get(c.Param("id"), true)
 	if aiProjectModel.ID == 0 {
 		response.Abort404(c)
 		return

@@ -4,9 +4,10 @@ import (
 	"datawiz-aiservices/pkg/config"
 	"datawiz-aiservices/pkg/console"
 	"datawiz-aiservices/pkg/logger"
+	"embed"
 )
 
-func Bootstrap() {
+func Bootstrap(databaseMigrationFS embed.FS) {
 	SetupApp()
 
 	// 初始化 Logger
@@ -19,7 +20,7 @@ func Bootstrap() {
 	SetupRedis()
 
 	// 初始化数据表
-	RunMigration()
+	RunMigration(databaseMigrationFS)
 
 	// 初始化预置数据
 	RunSeed()

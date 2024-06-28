@@ -6,6 +6,7 @@ import (
 	"datawiz-aiservices/app/models/ai_project_result"
 	"datawiz-aiservices/app/requests"
 	"datawiz-aiservices/pkg/config"
+	"datawiz-aiservices/pkg/helpers"
 	"datawiz-aiservices/pkg/response"
 	"datawiz-aiservices/pkg/translator"
 	"encoding/json"
@@ -83,11 +84,15 @@ func (ctrl *AiProjectResultsController) Index(c *gin.Context) {
 
 func (ctrl *AiProjectResultsController) Show(c *gin.Context) {
 	id := c.Param("id")
-	aiProjectResultModel := ai_project_result.Get(id)
-	if aiProjectResultModel.ID == 0 {
+	if helpers.IsUUID(id) {
 		aiProjectResultModels := ai_project_result.GetByUUID(id)
 		response.Data(c, aiProjectResultModels)
 	} else {
+		aiProjectResultModel := ai_project_result.Get(id, false)
+		if aiProjectResultModel.ID == 0 {
+			response.Abort404(c)
+			return
+		}
 		response.Data(c, aiProjectResultModel)
 	}
 }
@@ -119,6 +124,11 @@ func (ctrl *AiProjectResultsController) Store(c *gin.Context) {
 		AiProjectUUID: request.AiProjectUUID,
 	}
 
+	// authHeader := c.Request.Header.Get("Authorization")
+	// if authHeader == "" {
+	// 	return "", ErrHeaderEmpty
+	// }
+
 	err := aiProjectResultModel.CreateTx(&request)
 
 	if err == nil {
@@ -134,7 +144,7 @@ func (ctrl *AiProjectResultsController) Store(c *gin.Context) {
 
 func (ctrl *AiProjectResultsController) Update(c *gin.Context) {
 
-	aiProjectResultModel := ai_project_result.Get(c.Param("id"))
+	aiProjectResultModel := ai_project_result.Get(c.Param("id"), true)
 	if aiProjectResultModel.ID == 0 {
 		response.Abort404(c)
 		return
@@ -165,9 +175,72 @@ func (ctrl *AiProjectResultsController) Update(c *gin.Context) {
 	}
 }
 
+func (ctrl *AiProjectResultsController) Patch(c *gin.Context) {
+
+	aiProjectResultModel := ai_project_result.Get(c.Param("id"), true)
+	if aiProjectResultModel.ID == 0 {
+		response.Abort404(c)
+		return
+	}
+
+	request := requests.AiProjectResultRequest{}
+	ok := requests.Validate(c, &request, requests.AiProjectResultSave)
+	if !ok {
+		return
+	}
+
+	if !helpers.Empty(request.Input) {
+		aiProjectResultModel.Input = request.Input
+	}
+
+	if !helpers.Empty(request.Output) {
+		aiProjectResultModel.Output = request.Output
+	}
+
+	if !helpers.Empty(request.Status) {
+		aiProjectResultModel.Status = request.Status
+	}
+
+	// aiProjectResultModel.UserID = request.UserID
+	// aiProjectResultModel.AiModelUUID = request.AiModelUUID
+	// aiProjectResultModel.AiProjectUUID = request.AiProjectUUID
+
+	err := aiProjectResultModel.SaveTx(&request, true)
+	if err == nil {
+		if !helpers.Empty(request.Name) {
+			aiProjectResultModel.Name = request.Name
+		}
+		if !helpers.Empty(request.Description) {
+			aiProjectResultModel.Description = request.Description
+		}
+
+		response.Data(c, aiProjectResultModel)
+	} else {
+		response.Abort500(c, translator.TransHandler.T("r.uFailed"))
+	}
+}
+
+func (ctrl *AiProjectResultsController) Restart(c *gin.Context) {
+
+	aiProjectResultModel := ai_project_result.Get(c.Param("id"), true)
+	if aiProjectResultModel.ID == 0 {
+		response.Abort404(c)
+		return
+	} else {
+		aiModel := ai_model.GetBy("uuid", string(aiProjectResultModel.AiModelUUID))
+		if aiModel.ID == 0 {
+			response.Abort404(c)
+			return
+		} else {
+			notifyAiProcess(cast.ToString(aiProjectResultModel.UUID), string(aiModel.Code))
+			response.Success(c)
+		}
+	}
+}
+
 func (ctrl *AiProjectResultsController) Delete(c *gin.Context) {
 
-	aiProjectResultModel := ai_project_result.Get(c.Param("id"))
+	aiProjectResultModel := ai_project_result.Get(c.Param("id"), true)
 	if aiProjectResultModel.ID == 0 {
 		response.Abort404(c)
 		return

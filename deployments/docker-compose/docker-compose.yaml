@@ -11,8 +11,8 @@ services:
     network_mode: bridge
     volumes:
       - "../../.env:/app/.env"
-      - "../../storage:/app/storage"
-      - "../../storage/logs:/app/storage/logs"
+      - "../../runing/storage:/app/storage"
+      - "../../runing/storage/logs:/app/storage/logs"
     ports:
       - "8088:8088"
 # appplus:
@@ -31,7 +31,7 @@ services:
 #     - redis
 #   restart: always
   db:
-    image: postgres:latest
+    image: postgres
     container_name: rj_starwiz_ai_db
     restart: always
     network_mode: bridge
@@ -45,7 +45,8 @@ services:
       - PGTZ=Asia/Shanghai
       - ALLOW_IP_RANGE=0.0.0.0/0
     volumes:
-      - "../../db/data:/var/lib/postgresql/data"
+      - "../../runing/db/data:/var/lib/postgresql/data"
+      - ../../runing/db/init.sql:/docker-entrypoint-initdb.d/init.sql
 # db:
 #   image: postgis/postgis
 #   container_name: rj_starwiz_ai_db
@@ -63,8 +64,8 @@ services:
 #     - PGTZ=Asia/Shanghai
 #     - ALLOW_IP_RANGE=0.0.0.0/0
 #   volumes:
-#     - "../../db/data:/var/lib/postgresql/data"
-#     - "../../db/create_plugin.sh:/docker-entrypoint-initdb.d/create_plugin.sh"
+#     - "../../runing/db/data:/var/lib/postgresql/data"
+#     - "../../runing/db/create_plugin.sh:/docker-entrypoint-initdb.d/create_plugin.sh"
   redis:
       image: redis:7-alpine
       container_name: rj_starwiz_ai_redis
@@ -74,8 +75,8 @@ services:
         - "56379:6379"
       command: [ "redis-server", "/etc/redis.conf", "--appendonly", "yes" ]
       volumes:
-        - ../../redis/data:/data
-        - ../../redis/redis.conf:/etc/redis.conf
+        - ../../runing/redis/data:/data
+        - ../../runing/redis/redis.conf:/etc/redis.conf
       healthcheck:
         test: "redis-cli -h 127.0.0.1 -p 6379 info Replication"
         interval: 10s

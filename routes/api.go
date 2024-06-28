@@ -5,7 +5,6 @@ import (
 	controllers "datawiz-aiservices/app/http/controllers/api/v1"
 	"datawiz-aiservices/app/http/middlewares"
 	"datawiz-aiservices/pkg/config"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,15 +23,19 @@ func RegisterAPIRoutes(r *gin.Engine) {
 	// 全局限流中间件：每小时限流。这里是所有 API （根据 IP）请求加起来。
 	// 作为参考 Github API 每小时最多 60 个请求（根据 IP）。
 	// 测试时，可以调高一点。
-	v1.Use(middlewares.LimitIP("2000-H"), middlewares.Translation())
+	v1.Use(middlewares.LimitIP("3000-H"), middlewares.Translation())
 	{
-		v1.StaticFS("/uploads", http.Dir("./public/uploads"))
-		// v1.Static("/uploads", "./public/uploads")
-
 		hc := new(controllers.HealthsController)
 		hcGroup := v1.Group("/health")
 		{
 			hcGroup.GET("", hc.Health)
+		}
+
+		ac := new(controllers.AssetsController)
+		acGroup := v1.Group("/assets")
+		{
+			acGroup.GET("/image", ac.Image)
+			acGroup.GET("/download", ac.Download)
 		}
 
 		tc := new(controllers.TranslationsController)
@@ -73,6 +76,8 @@ func RegisterAPIRoutes(r *gin.Engine) {
 			aprcGroup.GET("/:id", aprc.Show)
 			aprcGroup.POST("", aprc.Store)
 			aprcGroup.PUT("/:id", aprc.Update)
+			aprcGroup.PATCH("/:id", aprc.Patch)
+			aprcGroup.POST("restart/:id", aprc.Restart)
 			aprcGroup.DELETE("/:id", aprc.Delete)
 		}
 		// end V1

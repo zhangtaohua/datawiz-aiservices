@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"reflect"
+	"regexp"
 	"time"
 
 	mathrand "math/rand"
@@ -92,6 +93,21 @@ func UUID() string {
 		}
 	}
 	return cast.ToString(uuidV1)
+}
+
+// IsUUID checks if a string is a valid UUID.
+func IsUUIDV1(u string) bool {
+	// Regular expression to match a valid UUID
+	r := regexp.MustCompile(`^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$`)
+	return r.MatchString(u)
+}
+
+func IsUUID(u string) bool {
+	err := uuid.Validate(u)
+	if err == nil {
+		return true
+	}
+	return false
 }
 
 // input: "2024-05-27T15:12:48.356854+08:00"

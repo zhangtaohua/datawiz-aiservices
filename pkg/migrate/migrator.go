@@ -2,7 +2,9 @@
 package migrate
 
 import (
-	"os"
+	"embed"
+	"io/fs"
+	"sync"
 
 	"datawiz-aiservices/pkg/console"
 	"datawiz-aiservices/pkg/database"
@@ -23,6 +25,15 @@ type Migration struct {
 	ID        uint64 `gorm:"primaryKey;autoIncrement;"`
 	Migration string `gorm:"type:varchar(191);not null;unique;"`
 	Batch     int
+}
+
+var once sync.Once
+var DatabaseMigrationFS embed.FS
+
+func SetMigrationPath(databaseMigrationFS embed.FS) {
+	once.Do(func() {
+		DatabaseMigrationFS = databaseMigrationFS
+	})
 }
 
 // NewMigrator 创建 Migrator 实例，用以执行迁移操作
@@ -147,7 +158,9 @@ func (migrator *Migrator) readAllMigrationFiles() []MigrationFile {
 
 	// 读取 database/migrations/ 目录下的所有文件
 	// 默认是会按照文件名称进行排序
-	files, err := os.ReadDir(migrator.Folder)
+	// files, err := DatabaseMigrationFS.ReadDir(migrator.Folder)
+	sub, _ := fs.Sub(DatabaseMigrationFS, "database")
+	files, err := fs.ReadDir(sub, "migrations")
 	console.ExitIf(err)
 
 	var migrateFiles []MigrationFile

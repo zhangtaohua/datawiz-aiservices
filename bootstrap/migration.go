@@ -4,11 +4,13 @@ package bootstrap
 import (
 	"datawiz-aiservices/database/migrations"
 	"datawiz-aiservices/pkg/migrate"
+	"embed"
 	"os"
 )
 
 // SetupCache 缓存
-func RunMigration() {
+func RunMigration(databaseMigrationFS embed.FS) {
+	migrate.SetMigrationPath(databaseMigrationFS)
 	// 初始化数据表
 	length := len(os.Args)
 	if length >= 3 {
