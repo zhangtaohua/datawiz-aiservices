@@ -34,7 +34,7 @@ func (aiModel *AiModel) AfterFind(tx *gorm.DB) (err error) {
 	inputkey := aiModel.InputFeatures
 	outkey := aiModel.OutputLabels
 
-	tranV := translation.GetTs([]string{namekey, desckey, inputkey, outkey}, app.Language)
+	tranV := translation.TryGetTsV1([]string{namekey, desckey, inputkey, outkey}, app.Language)
 
 	aiModel.Name = tranV[namekey]
 	aiModel.Description = tranV[desckey]

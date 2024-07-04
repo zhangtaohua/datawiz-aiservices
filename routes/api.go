@@ -52,6 +52,7 @@ func RegisterAPIRoutes(r *gin.Engine) {
 		amcGroup := v1.Group("/models")
 		{
 			amcGroup.GET("", amc.Index)
+			amcGroup.GET("/page", amc.PaginateIndex)
 			amcGroup.GET("/:id", amc.Show)
 			amcGroup.POST("", amc.Store)
 			amcGroup.PUT("/:id", amc.Update)
@@ -62,6 +63,7 @@ func RegisterAPIRoutes(r *gin.Engine) {
 		apcGroup := v1.Group("/projects")
 		{
 			apcGroup.GET("", apc.Index)
+			apcGroup.GET("/page", apc.PaginateIndex)
 			apcGroup.GET("/:id", apc.Show)
 			apcGroup.POST("", apc.Store)
 			apcGroup.PUT("/:id", apc.Update)
@@ -73,6 +75,7 @@ func RegisterAPIRoutes(r *gin.Engine) {
 		aprcGroup := v1.Group("/project/results")
 		{
 			aprcGroup.GET("", aprc.Index)
+			aprcGroup.GET("/page", aprc.PaginateIndex)
 			aprcGroup.GET("/:id", aprc.Show)
 			aprcGroup.POST("", aprc.Store)
 			aprcGroup.PUT("/:id", aprc.Update)

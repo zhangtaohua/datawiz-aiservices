@@ -23,7 +23,7 @@ func (aiProjectResult *AiProjectResult) AfterFind(tx *gorm.DB) (err error) {
 	namekey := aiProjectResult.Name
 	desckey := aiProjectResult.Description
 
-	tranV := translation.GetTs([]string{namekey, desckey}, app.Language)
+	tranV := translation.TryGetTsV1([]string{namekey, desckey}, app.Language)
 
 	aiProjectResult.Name = tranV[namekey]
 	aiProjectResult.Description = tranV[desckey]

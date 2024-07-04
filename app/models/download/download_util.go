@@ -29,10 +29,12 @@ func IsExist(field, value string) bool {
 	return count > 0
 }
 
-func Paginate(c *gin.Context, whereFields []interface{}, perPage int) (downloads []Download, paging paginator.Paging) {
+func Paginate(c *gin.Context, preloadFields []paginator.BasePreloadField,
+	whereFields []paginator.BaseWhereField, perPage int) (downloads []Download, paging paginator.Paging) {
 	paging = paginator.Paginate(
 		c,
 		database.DB.Model(Download{}),
+		preloadFields,
 		whereFields,
 		&downloads,
 		app.V1URL(database.TableName(&Download{})),

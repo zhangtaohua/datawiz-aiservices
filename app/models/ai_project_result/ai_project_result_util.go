@@ -39,10 +39,12 @@ func IsExist(field, value string) bool {
 	return count > 0
 }
 
-func Paginate(c *gin.Context, whereFields []interface{}, perPage int) (aiProjectResults []AiProjectResult, paging paginator.Paging) {
+func Paginate(c *gin.Context, preloadFields []paginator.BasePreloadField,
+	whereFields []paginator.BaseWhereField, perPage int) (aiProjectResults []AiProjectResult, paging paginator.Paging) {
 	paging = paginator.Paginate(
 		c,
 		database.DB.Model(AiProjectResult{}),
+		preloadFields,
 		whereFields,
 		&aiProjectResults,
 		app.V1URL(database.TableName(&AiProjectResult{})),

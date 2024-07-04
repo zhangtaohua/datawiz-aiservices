@@ -37,14 +37,6 @@ func Bootstrap(databaseMigrationFS embed.FS) {
 	// 初始化路由绑定
 	router := SetupRoute()
 
-	// fmt.Printf("%s", translation.GetT("c_test", "zh-CN"))
-	// fmt.Println()
-	// fmt.Printf("%s", translation.GetT("c_test", "zh-TW"))
-	// fmt.Println()
-
-	// fmt.Printf("%v", translation.GetTs([]string{"c_test", "c_name", "c_language"}, "zh-TW"))
-	// fmt.Println()
-
 	// 运行服务器
 	err := router.Run(":" + config.Get("app.port"))
 	if err != nil {

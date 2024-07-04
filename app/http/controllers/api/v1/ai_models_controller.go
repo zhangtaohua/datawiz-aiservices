@@ -18,6 +18,21 @@ func (ctrl *AiModelsController) Index(c *gin.Context) {
 	response.Data(c, aiModels)
 }
 
+func (ctrl *AiModelsController) PaginateIndex(c *gin.Context) {
+	request := requests.PaginationRequest{}
+	if ok := requests.Validate(c, &request, requests.Pagination); !ok {
+		return
+	}
+
+	whereFields := requests.MakeWhereFields(request, true)
+
+	data, pager := ai_model.Paginate(c, nil, whereFields, 10)
+	response.JSON(c, gin.H{
+		"data":  data,
+		"pager": pager,
+	})
+}
+
 func (ctrl *AiModelsController) Show(c *gin.Context) {
 	aiModelModel := ai_model.Get(c.Param("id"), false)
 	if aiModelModel.ID == 0 {

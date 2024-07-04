@@ -82,6 +82,21 @@ func (ctrl *AiProjectResultsController) Index(c *gin.Context) {
 	response.Data(c, aiProjectResults)
 }
 
+func (ctrl *AiProjectResultsController) PaginateIndex(c *gin.Context) {
+	request := requests.PaginationRequest{}
+	if ok := requests.Validate(c, &request, requests.Pagination); !ok {
+		return
+	}
+
+	whereFields := requests.MakeWhereFields(request, true)
+
+	data, pager := ai_project_result.Paginate(c, nil, whereFields, 10)
+	response.JSON(c, gin.H{
+		"data":  data,
+		"pager": pager,
+	})
+}
+
 func (ctrl *AiProjectResultsController) Show(c *gin.Context) {
 	id := c.Param("id")
 	if helpers.IsUUID(id) {

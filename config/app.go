@@ -33,7 +33,7 @@ func init() {
 
 			"ai_process_base_url": config.Env("AI_PROCESS_BASE_URL", "http://localhost:5177"),
 
-			"assets_base_dir": config.Env("ASSETS_BASE_DIR", "/mnt/nas246/public/DataWiz/ais"),
+			"assets_base_dir": config.Env("ASSETS_BASE_DIR", "/app/mnt/ais"),
 		}
 	})
 }

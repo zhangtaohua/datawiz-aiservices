@@ -18,6 +18,11 @@ func GetBy(field, value string) (translation Translation) {
 	return
 }
 
+func GetByTextLang(translationText, language string) (translations []Translation) {
+	database.DB.Select("translation_id").Where(`translated_text LIKE ? AND language = ? `, translationText, language).Find(&translations)
+	return
+}
+
 func GetByTidLang(translationId, language string) (translation Translation) {
 	database.DB.Where(`translation_id = ? AND language = ? `, translationId, language).First(&translation)
 	return
@@ -25,7 +30,7 @@ func GetByTidLang(translationId, language string) (translation Translation) {
 
 func GetT(translationId, language string) (msg string) {
 	var translation Translation
-	database.DB.Model(Translation{}).Where(`translation_id = ? AND language = ? `, translationId, language).Find(&translation)
+	database.DB.Model(Translation{}).Where(`translation_id = ? AND language = ? `, translationId, language).First(&translation)
 	msg = translation.TranslatedText
 	return
 }
@@ -36,11 +41,11 @@ func TryGetT(translationId, language string) (msg string) {
 	languageList := []string{"zh-CN", "zh-TW", "en"}
 
 	var translation Translation
-	database.DB.Model(Translation{}).Where(`translation_id = ? AND language = ? `, translationId, language).Find(&translation)
+	database.DB.Model(Translation{}).Where(`translation_id = ? AND language = ? `, translationId, language).First(&translation)
 	if translation.ID == 0 {
 		for _, tryLanguage := range languageList {
 			if tryLanguage != language {
-				database.DB.Model(Translation{}).Where(`translation_id = ? AND language = ? `, translationId, tryLanguage).Find(&translation)
+				database.DB.Model(Translation{}).Where(`translation_id = ? AND language = ? `, translationId, tryLanguage).First(&translation)
 				if translation.ID != 0 {
 					break
 				}
@@ -160,12 +165,14 @@ func IsEmpty() bool {
 	return count == 0
 }
 
-func Paginate(c *gin.Context, whereFields []interface{}, perPage int) (translation []Translation, paging paginator.Paging) {
+func Paginate(c *gin.Context, preloadFields []paginator.BasePreloadField,
+	whereFields []paginator.BaseWhereField, perPage int) (translations []Translation, paging paginator.Paging) {
 	paging = paginator.Paginate(
 		c,
 		database.DB.Model(Translation{}),
+		preloadFields,
 		whereFields,
-		&translation,
+		&translations,
 		app.V1URL(database.TableName(&Translation{})),
 		perPage,
 	)

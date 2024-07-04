@@ -27,18 +27,27 @@ type Paging struct {
 
 // Paginator 分页操作类
 type Paginator struct {
-	BaseURL     string // 用以拼接 URL
-	PerPage     int    // 每页条数
-	Page        int    // 当前页
-	Offset      int    // 数据库读取数据时 Offset 的值
-	TotalCount  int64  // 总条数
-	TotalPage   int    // 总页数 = TotalCount/PerPage
-	Sort        string // 排序规则
-	Order       string // 排序顺序
-	WhereFields []interface{}
+	BaseURL    string // 用以拼接 URL
+	PerPage    int    // 每页条数
+	Page       int    // 当前页
+	Offset     int    // 数据库读取数据时 Offset 的值
+	TotalCount int64  // 总条数
+	TotalPage  int    // 总页数 = TotalCount/PerPage
+	Sort       string // 排序规则
+	Order      string // 排序顺序
 
 	query *gorm.DB     // db query 句柄
 	ctx   *gin.Context // gin context，方便调用
+}
+
+type BasePreloadField struct {
+	Query  string
+	Values []interface{}
+}
+
+type BaseWhereField struct {
+	Query  interface{}
+	Values []interface{}
 }
 
 // Paginate 分页
@@ -49,90 +58,54 @@ type Paginator struct {
 // PerPage —— 每页条数，优先从 url 参数里取，否则使用 perPage 的值
 // 用法:
 //
-//	   query := database.DB.Model(Topic{}).Where("category_id = ?", cid)
-//	var topics []Topic
-//	   paging := paginator.Paginate(
-//	       c,
-//	       query,
-//	       &topics,
-//	       app.APIURL(database.TableName(&Topic{})),
-//	       perPage,
-//	   )
-func Paginate(c *gin.Context, db *gorm.DB, whereFields []interface{}, data interface{}, baseURL string, perPage int) Paging {
+//		   query := database.DB.Model(Topic{}).Where("category_id = ?", cid)
+//		var topics []Topic
+//		   paging := paginator.Paginate(
+//		       c,
+//		       query,
+//	          preloadFields,
+//	        	whereFields,
+//		       &topics,
+//		       app.APIURL(database.TableName(&Topic{})),
+//		       perPage,
+//		   )
+func Paginate(c *gin.Context, db *gorm.DB,
+	preloadFields []BasePreloadField,
+	whereFields []BaseWhereField,
+	data interface{}, baseURL string, perPage int) Paging {
 
 	// 初始化 Paginator 实例
+	preloadLength := len(preloadFields)
+	if preloadLength > 0 {
+		for i := 0; i < preloadLength; i++ {
+			preloadField := preloadFields[i]
+			db = db.Preload(preloadField.Query, preloadField.Values...)
+		}
+	}
+
+	db = db.Preload(clause.Associations)
+
+	whereLength := len(whereFields)
+	if whereLength > 0 {
+		for i := 0; i < whereLength; i++ {
+			whereField := whereFields[i]
+			db = db.Where(whereField.Query, whereField.Values...)
+		}
+	}
+
 	p := &Paginator{
 		query: db,
 		ctx:   c,
 	}
-	p.initProperties(perPage, baseURL, whereFields)
+
+	p.initProperties(perPage, baseURL)
 
 	// 查询数据库
-	length := len(whereFields)
-	var err error
-	if length > 0 {
-		whereFieldsValue := whereFields[1:]
-		err = p.query.Preload(clause.Associations). // 读取关联
-								Where(whereFields[0], whereFieldsValue...).
-								Order(p.Sort + " " + p.Order). // 排序
-								Limit(p.PerPage).
-								Offset(p.Offset).
-								Find(data).
-								Error
-	} else {
-		err = p.query.Preload(clause.Associations). // 读取关联
-								Order(p.Sort + " " + p.Order). // 排序
-								Limit(p.PerPage).
-								Offset(p.Offset).
-								Find(data).
-								Error
-	}
-
-	// 数据库出错
-	if err != nil {
-		logger.LogIf(err)
-		return Paging{}
-	}
-
-	return Paging{
-		CurrentPage: p.Page,
-		PerPage:     p.PerPage,
-		TotalPage:   p.TotalPage,
-		TotalCount:  p.TotalCount,
-		NextPageURL: p.getNextPageURL(),
-		PrevPageURL: p.getPrevPageURL(),
-	}
-}
-
-func OrderPaginate(c *gin.Context, db *gorm.DB, whereFields []interface{}, data interface{}, baseURL string, perPage int) Paging {
-
-	// 初始化 Paginator 实例
-	p := &Paginator{
-		query: db,
-		ctx:   c,
-	}
-	p.initProperties(perPage, baseURL, whereFields)
-
-	// 查询数据库
-	length := len(whereFields)
-	var err error
-	if length > 0 {
-		whereFieldsValue := whereFields[1:]
-		err = p.query.Preload("Product.Category").Preload("Product.Supplier").Preload(clause.Associations). // 读取关联
-															Where(whereFields[0], whereFieldsValue...).
-															Order(p.Sort + " " + p.Order). // 排序
-															Limit(p.PerPage).
-															Offset(p.Offset).
-															Find(data).
-															Error
-	} else {
-		err = p.query.Preload("Product.Category").Preload("Product.Supplier").Preload(clause.Associations). // 读取关联
-															Order(p.Sort + " " + p.Order). // 排序
-															Limit(p.PerPage).
-															Offset(p.Offset).
-															Find(data).
-															Error
-	}
+	err := p.query.Order(p.Sort + " " + p.Order). // 排序
+							Limit(p.PerPage).
+							Offset(p.Offset).
+							Find(data).
+							Error
 
 	// 数据库出错
 	if err != nil {
@@ -151,11 +124,10 @@ func OrderPaginate(c *gin.Context, db *gorm.DB, whereFields []interface{}, data 
 }
 
 // 初始化分页必须用到的属性，基于这些属性查询数据库
-func (p *Paginator) initProperties(perPage int, baseURL string, whereFields []interface{}) {
+func (p *Paginator) initProperties(perPage int, baseURL string) {
 
 	p.BaseURL = p.formatBaseURL(baseURL)
 	p.PerPage = p.getPerPage(perPage)
-	p.WhereFields = whereFields
 
 	// 排序参数（控制器中以验证过这些参数，可放心使用）
 	p.Order = p.ctx.DefaultQuery(config.Get("paging.url_query_order"), "asc")
@@ -204,16 +176,8 @@ func (p Paginator) getCurrentPage() int {
 // getTotalCount 返回的是数据库里的条数
 func (p *Paginator) getTotalCount() int64 {
 	var count int64
-	if cast.ToBool(len(p.WhereFields)) {
-		whereFieldsValue := p.WhereFields[1:]
-		if err := p.query.Where(p.WhereFields[0], whereFieldsValue...).Count(&count).Error; err != nil {
-			return 0
-		}
-
-	} else {
-		if err := p.query.Count(&count).Error; err != nil {
-			return 0
-		}
+	if err := p.query.Count(&count).Error; err != nil {
+		return 0
 	}
 	return count
 }

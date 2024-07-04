@@ -13,6 +13,7 @@ services:
       - "../../.env:/app/.env"
       - "../../runing/storage:/app/storage"
       - "../../runing/storage/logs:/app/storage/logs"
+      - "/mnt/nas246/public/DataWiz/ais:/app/mnt/ais"
     ports:
       - "8088:8088"
 # appplus:
