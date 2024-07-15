@@ -15,6 +15,7 @@ type AiProjectResultRequest struct {
 
 	Progress uint32 `json:"progress"`
 	Status   string `json:"status"`
+	Views    uint32 `json:"views"`
 
 	UserID        string `json:"user_id"`
 	AiModelUUID   string `json:"ai_model_uuid"`

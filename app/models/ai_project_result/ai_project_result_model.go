@@ -29,6 +29,7 @@ type AiProjectResult struct {
 
 	Progress uint32 `json:"progress"`
 	Status   string `json:"status"`
+	Views    uint32 `json:"views"`
 
 	// 其他信息
 	UserID        string `json:"user_id"`
@@ -52,6 +53,11 @@ func (aiProjectResult *AiProjectResult) Save() (rowsAffected int64) {
 
 func (aiProjectResult *AiProjectResult) Delete() (rowsAffected int64) {
 	result := database.DB.Delete(&aiProjectResult)
+	return result.RowsAffected
+}
+
+func (aiProjectResult *AiProjectResult) PatchNoTx(field string, value interface{}) (rowsAffected int64) {
+	result := database.DB.Model(&aiProjectResult).Omit("AiModel").Omit("AiProject").Omit("Associations").Select(field).Update(field, value)
 	return result.RowsAffected
 }
 

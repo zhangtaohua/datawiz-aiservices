@@ -5,6 +5,7 @@ import (
 	"datawiz-aiservices/pkg/config"
 	"datawiz-aiservices/pkg/file"
 	"datawiz-aiservices/pkg/response"
+	"fmt"
 	"io"
 	"net/http/httputil"
 	"net/url"
@@ -87,6 +88,7 @@ func (ctrl *AssetsController) Image(c *gin.Context) {
 
 	buff := bytes.NewBuffer([]byte{})
 	imagePath := config.Get("app.assets_base_dir") + path
+	fmt.Printf("Image path: %v", imagePath)
 	imgType, err := file.GetImage(buff, imagePath, prdtType, subType, iw, ih, fit)
 	if err == nil {
 		c.Header("Content-Type", "image/"+imgType)

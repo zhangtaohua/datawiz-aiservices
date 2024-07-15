@@ -34,6 +34,7 @@ func init() {
 
 		Progress uint32 `gorm:"default:0;comment:进度条;"`
 		Status   string `gorm:"type:varchar(32);default:null;comment:状态;"`
+		Views    uint32 `gorm:"default:0;comment:浏览次数;"`
 
 		UserID        string `gorm:"type:varchar(191);not null;index;"`
 		AiModelUUID   string `gorm:"type:varchar(191);not null;index;"`

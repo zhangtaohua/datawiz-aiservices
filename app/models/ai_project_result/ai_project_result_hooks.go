@@ -3,6 +3,7 @@ package ai_project_result
 import (
 	"datawiz-aiservices/app/models/translation"
 	"datawiz-aiservices/pkg/app"
+	"datawiz-aiservices/pkg/helpers"
 
 	"gorm.io/gorm"
 )
@@ -27,6 +28,14 @@ func (aiProjectResult *AiProjectResult) AfterFind(tx *gorm.DB) (err error) {
 
 	aiProjectResult.Name = tranV[namekey]
 	aiProjectResult.Description = tranV[desckey]
+
+	views := aiProjectResult.Views
+	if helpers.Empty(views) {
+		views = 1
+	} else {
+		views = views + 1
+	}
+	aiProjectResult.PatchNoTx("views", views)
 
 	return nil
 }
