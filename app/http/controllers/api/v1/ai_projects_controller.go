@@ -3,6 +3,7 @@ package v1
 import (
 	"datawiz-aiservices/app/models/ai_project"
 	"datawiz-aiservices/app/requests"
+	"datawiz-aiservices/pkg/auth"
 	"datawiz-aiservices/pkg/helpers"
 	"datawiz-aiservices/pkg/response"
 	"datawiz-aiservices/pkg/translator"
@@ -50,11 +51,13 @@ func (ctrl *AiProjectsController) Store(c *gin.Context) {
 		return
 	}
 
+	userId := auth.CurrentUID(c)
+
 	aiProjectModel := ai_project.AiProject{
 		Name:        "",
 		Description: "",
 		Cover:       request.Cover,
-		UserID:      "rj-todo",
+		UserID:      userId,
 	}
 	err := aiProjectModel.CreateTx(&request)
 

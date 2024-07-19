@@ -94,12 +94,18 @@ GPU：
 完成后的目录结果如下所示
 ```
 ├── build
+│   └── i18n
+│       └── en.json
+│       └── zh-CN.json
+│       └── zh-TW.json
+├── build
 │   └── images
-│       └── starwiz_ai_go.tar.gz
+│       └── starwiz_ai_go.tar
 ├── deployments
 │   ├── deploy.sh
 │   ├── docker-compose
 │   │   └── docker-compose.yaml
+├── .env
 ```
 
 ### 4.3.2 执行脚本

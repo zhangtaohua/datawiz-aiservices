@@ -18,21 +18,21 @@ docker_builder:
 
 docker_producer:
 	docker build -t ${IMAGE_NAME}:prod -f ./build/docker/Dockerfile.build .
-	docker save -o ./build/images/${IMAGE_NAME}.tar.gz ${IMAGE_NAME}:prod
+	docker save -o ./build/images/${IMAGE_NAME}.tar ${IMAGE_NAME}:prod
 
-# docker save alpine | gzip > alpine-latest.tar.gz
+# docker save alpine | gzip > alpine-latest.tar
 
 windows_local_producer:windows_local_builder
 	docker build -t ${IMAGE_NAME}:local_prod -f ./build/docker/Dockerfile.local .
-	docker save -o ./build/images/${IMAGE_NAME}.tar.gz ${IMAGE_NAME}:local_prod
+	docker save -o ./build/images/${IMAGE_NAME}.tar ${IMAGE_NAME}:local_prod
 
 linux_local_producer:linux_local_builder
 	docker build -t ${IMAGE_NAME}:local_prod -f ./build/docker/Dockerfile.local .
-	docker save -o ./build/images/${IMAGE_NAME}.tar.gz ${IMAGE_NAME}:local_prod
+	docker save -o ./build/images/${IMAGE_NAME}.tar ${IMAGE_NAME}:local_prod
 
 macos_local_producer:macos_local_builder
 	docker build -t ${IMAGE_NAME}:local_prod -f ./build/docker/Dockerfile.local .
-	docker save -o ./build/images/${IMAGE_NAME}.tar.gz ${IMAGE_NAME}:local_prod
+	docker save -o ./build/images/${IMAGE_NAME}.tar ${IMAGE_NAME}:local_prod
 
 windows_local_builder:
 	$(info "start build...")

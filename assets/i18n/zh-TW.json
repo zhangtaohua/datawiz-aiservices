@@ -30,5 +30,6 @@
   "r.reqParseErr": "請求處理失敗，請查看 error 的值",
   "r.reqValidErr": "請求驗證不通過，具體請查看 errors",
   "r.noPageErr": "頁面返回 404",
-  "r.noRouterErr": "路由未定義，請確認 url 和請求方法是否正確"
+  "r.noRouterErr": "路由未定義，請確認 url 和請求方法是否正確",
+  "r.guestErr": "請以遊客身分操作"
 }

@@ -30,5 +30,6 @@
   "r.reqParseErr": "Request processing failed, please check the value of error",
   "r.reqValidErr": "Request verification failed, please check errors for details",
   "r.noPageErr": "Page returns 404",
-  "r.noRouterErr": "The route is not defined, please confirm whether the url and request method are correct"
+  "r.noRouterErr": "The route is not defined, please confirm whether the url and request method are correct",
+  "r.guestErr": "Please operate as a guest"
 }

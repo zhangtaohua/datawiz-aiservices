@@ -31,5 +31,6 @@
   "r.reqParseErr": "请求处理失败，请查看 error 的值",
   "r.reqValidErr": "请求验证不通过，具体请查看 errors",
   "r.noPageErr": "页面返回 404",
-  "r.noRouterErr": "路由未定义，请确认 url 和请求方法是否正确"
+  "r.noRouterErr": "路由未定义，请确认 url 和请求方法是否正确",
+  "r.guestErr": "请以游客身份操作"
 }

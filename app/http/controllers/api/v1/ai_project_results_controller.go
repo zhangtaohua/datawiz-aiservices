@@ -5,6 +5,7 @@ import (
 	"datawiz-aiservices/app/models/ai_model"
 	"datawiz-aiservices/app/models/ai_project_result"
 	"datawiz-aiservices/app/requests"
+	"datawiz-aiservices/pkg/auth"
 	"datawiz-aiservices/pkg/config"
 	"datawiz-aiservices/pkg/helpers"
 	"datawiz-aiservices/pkg/response"
@@ -125,6 +126,14 @@ func (ctrl *AiProjectResultsController) Store(c *gin.Context) {
 		return
 	}
 
+	userId := auth.CurrentUID(c)
+	if helpers.Empty(userId) {
+		userId = request.UserID
+		if helpers.Empty(userId) {
+			response.Unauthorized(c, translator.TransHandler.T("r.authErr"))
+		}
+	}
+
 	aiProjectResultModel := ai_project_result.AiProjectResult{
 		Name:        "",
 		Description: "",
@@ -134,7 +143,7 @@ func (ctrl *AiProjectResultsController) Store(c *gin.Context) {
 
 		Status: request.Status,
 
-		UserID:        request.UserID,
+		UserID:        userId,
 		AiModelUUID:   request.AiModelUUID,
 		AiProjectUUID: request.AiProjectUUID,
 	}

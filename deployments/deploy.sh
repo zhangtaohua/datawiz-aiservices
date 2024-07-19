@@ -16,15 +16,15 @@ sudo mkdir -p $LOGS_DIR
 sudo chmod -R 777 $PARENT_DIR
 
 # 判断上层目录是否存在 /build 文件
-IMAGE_TAR_FILE="$PARENT_DIR/build/images/starwiz_ai_go.tar.gz"
+IMAGE_TAR_FILE="$PARENT_DIR/build/images/starwiz_ai_go.tar"
 
 echo "IMAGE directory: $IMAGE_TAR_FILE"
 
 if [ -f "$IMAGE_TAR_FILE" ]; then
-    echo "images*.tar.gz found in parent directory. Running docker load ..."
+    echo "images*.tar found in parent directory. Running docker load ..."
     docker load -i $IMAGE_TAR_FILE
 else
-    echo "images*.tar.gz not found in parent directory."
+    echo "images*.tar not found in parent directory."
 fi
 
 # 检查 docker load 是否成功
