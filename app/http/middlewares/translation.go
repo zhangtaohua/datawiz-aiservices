@@ -12,8 +12,13 @@ func Translation() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
 		language := c.GetHeader("X-Language") // 获取请求头中的语言设置，默认为英文
+		aLanguage := c.GetHeader("Accept-Language")
+		aLanguage = strings.ToLower(aLanguage)
 		language = strings.ToLower(language)
-		if strings.HasPrefix(language, "en") {
+		if language == "" && aLanguage != "" {
+			language = aLanguage
+		}
+		if strings.Contains(language, "en") {
 			language = "en"
 		} else {
 			switch language {
